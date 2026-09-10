@@ -1,0 +1,75 @@
+TradeWise Database Information
+==============================
+
+Configured Database
+-------------------
+Database Name: trading_app
+Host: 127.0.0.1
+Port: 3306
+User: root
+Password: (empty by default in config.py)
+
+Status
+------
+The project is configured to use a local MySQL/XAMPP database.
+At the time of checking, MySQL was not running, so the live inserted data
+could not be exported from the actual database.
+
+Configured Tables From Project Schema
+-------------------------------------
+1. users
+   - id
+   - username
+   - email
+   - password_hash
+   - balance
+   - created_at
+
+2. stocks
+   - id
+   - symbol
+   - name
+   - current_price
+   - last_updated
+
+3. holdings
+   - id
+   - user_id
+   - stock_id
+   - quantity
+   - avg_buy_price
+
+4. transactions
+   - id
+   - user_id
+   - stock_id
+   - transaction_type
+   - quantity
+   - price_per_unit
+   - total_amount
+   - transaction_date
+
+5. admins
+   - id
+   - username
+   - password_hash
+   - created_at
+
+Schema File Sources
+-------------------
+- database/schema.sql
+- create_admin.py
+- app.py
+
+Notes
+-----
+- app.py also creates and uses additional admin/system-related tables dynamically.
+- To export the actual inserted data, start XAMPP MySQL first and then dump the
+  database `trading_app`.
+
+Suggested Export Command
+------------------------
+mysqldump -u root trading_app > trading_app_backup.sql
+
+If MySQL has a password, use:
+mysqldump -u root -p trading_app > trading_app_backup.sql

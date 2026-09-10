@@ -1,0 +1,1110 @@
+﻿<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>User Management - Admin</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    
+
+    <style>
+
+        /* Copy ALL styles from admin_dashboard.html here */
+
+.admin-layout{display:flex;min-height:100vh}.sidebar{width:260px;background:linear-gradient(180deg,#1e293b 0%,#0f172a 100%);color:white;padding:1.5rem 0;position:fixed;height:100vh;overflow-y:auto;z-index:100}.sidebar-header{padding:0 1.5rem 1.5rem 1.5rem;border-bottom:1px solid rgba(255,255,255,0.1);margin-bottom:1.5rem}.sidebar-brand{font-size:1.5rem;font-weight:700;color:#3b82f6;display:flex;align-items:center;gap:0.5rem}.sidebar-brand i{color:#D4AF37}.sidebar-menu{list-style:none;padding:0 1rem}.sidebar-item{margin-bottom:0.5rem}.sidebar-link{display:flex;align-items:center;gap:0.75rem;padding:0.875rem 1rem;color:#cbd5e1;text-decoration:none;border-radius:8px;transition:all 0.3s;font-weight:500}.sidebar-link:hover,.sidebar-link.active{background:rgba(59,130,246,0.2);color:#60a5fa}.sidebar-link.active{background:rgba(59,130,246,0.3);color:white;border-left:3px solid #3b82f6}.sidebar-link i{width:20px;text-align:center}.main-content{flex:1;margin-left:260px;padding:2rem}.top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid #e2e8f0}.top-bar h1{font-size:1.8rem;color:#1e293b;font-weight:700}.top-bar-actions{display:flex;gap:1rem;align-items:center}.btn-logout{background:#ef4444;color:white;padding:0.5rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:500;transition:background 0.3s}.btn-logout:hover{background:#dc2626}.search-bar{display:flex;gap:1rem;margin-bottom:1.5rem}.search-bar input{flex:1;padding:0.75rem 1rem;border:2px solid #e2e8f0;border-radius:8px;font-size:1rem}.search-bar input:focus{outline:none;border-color:#3b82f6}.search-bar button{padding:0.75rem 1.5rem;background:#3b82f6;color:white;border:none;border-radius:8px;cursor:pointer}.search-bar button:hover{background:#2563eb}.content-section{background:white;border-radius:12px;padding:2rem;box-shadow:0 2px 4px rgba(0,0,0,0.05);margin-bottom:2rem}.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem}.section-header h2{font-size:1.4rem;color:#1e293b;font-weight:600}.section-header h2 i{margin-right:0.5rem;color:#3b82f6}.data-table{width:100%;border-collapse:collapse}.data-table thead{background:#f8fafc}.data-table th{padding:1rem;text-align:left;font-weight:600;color:#475569;border-bottom:2px solid #e2e8f0}.data-table td{padding:1rem;border-bottom:1px solid #e2e8f0;color:#334155}.data-table tbody tr:hover{background:#f8fafc}.user-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#60a5fa);display:inline-flex;align-items:center;justify-content:center;color:white;font-weight:600;margin-right:0.75rem}.user-info{display:flex;align-items:center}.badge{padding:0.25rem 0.75rem;border-radius:20px;font-size:0.85rem;font-weight:500}.badge-success{background:#dcfce7;color:#166534}.badge-warning{background:#fef3c7;color:#92400e}.badge-danger{background:#fee2e2;color:#991b1b}.action-btn{padding:0.4rem 0.8rem;border:none;border-radius:6px;cursor:pointer;font-size:0.85rem;transition:all 0.3s;margin-right:0.5rem}.btn-view{background:#3b82f6;color:white}.btn-view:hover{background:#2563eb}.btn-edit{background:#10b981;color:white}.btn-edit:hover{background:#059669}.btn-delete{background:#ef4444;color:white}.btn-delete:hover{background:#dc2626}.btn-toggle{background:#6b7280;color:white}.btn-toggle:hover{background:#4b5563}@media(max-width:1024px){.sidebar{width:70px}.sidebar-header span,.sidebar-link span{display:none}.sidebar-brand{justify-content:center}.sidebar-link{justify-content:center;padding:1rem}.main-content{margin-left:70px}}@media(max-width:768px){.admin-layout{flex-direction:column}.sidebar{width:100%;height:auto;position:relative}.sidebar-menu{display:flex;overflow-x:auto;padding:0.5rem 0;gap:0.5rem}.sidebar-item{margin:0}.sidebar-link{padding:0.75rem;white-space:nowrap}.main-content{margin-left:0;padding:1rem}}
+
+
+        /* Modal Styles */
+
+        .modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);display:none;justify-content:center;align-items:center;z-index:1000}.modal.active{display:flex}.modal-content{background:white;border-radius:12px;padding:2rem;width:90%;max-width:700px;max-height:90vh;overflow-y:auto;animation:slideUp 0.3s ease}@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid #e2e8f0}.modal-header h3{font-size:1.3rem;color:#1e293b;font-weight:600}.modal-close{background:none;border:none;font-size:1.5rem;color:#64748b;cursor:pointer}.modal-close:hover{color:#ef4444}.form-group{margin-bottom:1.25rem}.form-group label{display:block;margin-bottom:0.5rem;color:#334155;font-weight:500}.form-group input,.form-group select{width:100%;padding:0.75rem;border:2px solid #e2e8f0;border-radius:8px;font-size:1rem}.form-group input:focus,.form-group select:focus{outline:none;border-color:#3b82f6}.modal-footer{display:flex;gap:1rem;justify-content:flex-end;margin-top:2rem}.btn-cancel{padding:0.75rem 1.5rem;border:1px solid #e2e8f0;border-radius:8px;background:white;color:#334155;font-weight:500;cursor:pointer}.btn-cancel:hover{background:#f1f5f9}.btn-confirm{padding:0.75rem 1.5rem;border:none;border-radius:8px;background:#3b82f6;color:white;font-weight:500;cursor:pointer}.btn-confirm:hover{background:#2563eb}
+
+        
+
+        /* Portfolio & Transaction Table Styles */
+
+        .portfolio-table, .transaction-table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+
+        .portfolio-table th, .transaction-table th { padding: 0.75rem; text-align: left; font-weight: 600; color: #475569; border-bottom: 2px solid #e2e8f0; background: #f8fafc; }
+
+        .portfolio-table td, .transaction-table td { padding: 0.75rem; border-bottom: 1px solid #e2e8f0; color: #334155; }
+
+        .portfolio-table tbody tr:hover, .transaction-table tbody tr:hover { background: #f8fafc; }
+
+        .profit-positive { color: #16a34a; font-weight: 600; }
+
+        .profit-negative { color: #ef4444; font-weight: 600; }
+
+        .transaction-buy { color: #16a34a; }
+
+        .transaction-sell { color: #ef4444; }
+
+        
+
+        /* Portfolio Summary */
+
+        .portfolio-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+
+        .summary-card { background: #f8fafc; padding: 1rem; border-radius: 8px; text-align: center; }
+
+        .summary-card h4 { color: #64748b; font-size: 0.85rem; margin-bottom: 0.25rem; }
+
+        .summary-card .value { font-size: 1.25rem; font-weight: 700; color: #1e293b; }
+
+        .summary-card .value.positive { color: #16a34a; }
+
+        .summary-card .value.negative { color: #ef4444; }
+
+    </style>
+
+</head>
+
+<body class="admin-layout">
+
+    <!-- Sidebar -->
+
+    <aside class="sidebar">
+
+        <div class="sidebar-header"><div class="sidebar-brand"><i class="fas fa-shield-alt"></i><span> Admin</span></div></div>
+
+        <ul class="sidebar-menu">
+
+            <li class="sidebar-item"><a href="{{ url_for('admin_dashboard') }}" class="sidebar-link"><i class="fas fa-home"></i><span>Dashboard</span></a></li>
+
+            <li class="sidebar-item"><a href="{{ url_for('admin_users') }}" class="sidebar-link active"><i class="fas fa-users"></i><span>User Management</span></a></li>
+
+            <li class="sidebar-item"><a href="{{ url_for('admin_stocks') }}" class="sidebar-link"><i class="fas fa-chart-line"></i><span>Stock Management</span></a></li>
+
+            <li class="sidebar-item"><a href="{{ url_for('admin_transactions') }}" class="sidebar-link"><i class="fas fa-exchange-alt"></i><span>Transaction Management</span></a></li>
+
+            <li class="sidebar-item"><a href="{{ url_for('admin_analytics') }}" class="sidebar-link"><i class="fas fa-chart-bar"></i><span>Analytics & Reports</span></a></li>
+
+            <li class="sidebar-item"><a href="{{ url_for('admin_funds') }}" class="sidebar-link"><i class="fas fa-wallet"></i><span>Fund Management</span></a></li>
+
+            <li class="sidebar-item"><a href="{{ url_for('admin_settings') }}" class="sidebar-link"><i class="fas fa-cog"></i><span>Admin Controls</span></a></li>
+
+            <li class="sidebar-item" style="margin-top:2rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,0.1)"><a href="{{ url_for('logout') }}" class="sidebar-link" style="color:#f87171"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a></li>
+
+        </ul>
+
+    </aside>
+
+    
+
+    <!-- Main Content -->
+
+    <main class="main-content">
+
+        <div class="top-bar">
+
+            <h1><i class="fas fa-users"></i> User Management</h1>
+
+            <div class="top-bar-actions">
+
+                <span style="color:#64748b">Welcome, <strong>{{ admin_name }}</strong></span>
+
+               
+
+            </div>
+
+        </div>
+
+        
+
+        <!-- Search -->
+
+        <div class="content-section">
+
+            <form class="search-bar" method="GET">
+
+                <input type="text" name="search" placeholder="Search users by name or email..." value="{{ search or '' }}">
+
+                <button type="submit"><i class="fas fa-search"></i> Search</button>
+
+            </form>
+
+        </div>
+
+        
+
+        <!-- Users Table -->
+
+        <div class="content-section">
+
+            <div class="section-header">
+
+                <h2><i class="fas fa-list"></i> All Registered Users</h2>
+
+                <span style="color:#64748b">{{ users|length }} users found</span>
+
+            </div>
+
+            <table class="data-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>ID</th>
+
+                        <th>User</th>
+
+                        <th>Email</th>
+
+                        <th>Balance</th>
+
+                        <th>Joined</th>
+
+                        <th>Status</th>
+
+                        <th>Actions</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for user in users %}
+
+                    <tr>
+
+                        <td>#{{ user.id }}</td>
+
+                        <td>
+
+                            <div class="user-info">
+
+                                <div class="user-avatar">{{ user.username[0].upper() }}</div>
+
+                                <strong>{{ user.username }}</strong>
+
+                            </div>
+
+                        </td>
+
+                        <td>{{ user.email }}</td>
+
+                        <td><strong style="color:#16a34a">₹{{ "%.2f"|format(user.balance) }}</strong></td>
+                        <td>{{ user.created_at.strftime('%Y-%m-%d') if user.created_at else 'N/A' }}</td>
+
+                        <td>
+
+                            <span class="badge {{ 'badge-success' if user.is_active else 'badge-danger' }}">
+
+                                <i class="fas fa-{{ 'check' if user.is_active else 'times' }}-circle"></i> 
+
+                                {{ 'Active' if user.is_active else 'Inactive' }}
+
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <button class="action-btn btn-view" onclick="viewPortfolio({{ user.id }}, '{{ user.username }}')" title="View Portfolio"><i class="fas fa-chart-pie"></i></button>
+
+                            <button class="action-btn btn-view" onclick="viewTransactions({{ user.id }}, '{{ user.username }}')" title="View Transactions"><i class="fas fa-exchange-alt"></i></button>
+
+                            <button class="action-btn btn-toggle" onclick="toggleUserStatus({{ user.id }})" title="{{ 'Deactivate' if user.is_active else 'Activate' }}">
+
+                                <i class="fas fa-{{ 'ban' if user.is_active else 'check' }}"></i>
+
+                            </button>
+
+                            <button class="action-btn btn-delete" onclick="deleteUser({{ user.id }}, '{{ user.username }}')" title="Delete User"><i class="fas fa-trash"></i></button>
+
+                        </td>
+
+                    </tr>
+
+                    {% else %}
+
+                    <tr>
+
+                        <td colspan="7" style="text-align:center;padding:2rem;color:#64748b">
+
+                            <i class="fas fa-inbox" style="font-size:2rem;margin-bottom:1rem;display:block"></i>
+
+                            No users found{% if search %} for "{{ search }}"{% endif %}
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </main>
+
+    
+
+    <!-- Edit User Modal (Enhanced with Phone) -->
+
+    <div class="modal" id="editModal">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h3><i class="fas fa-edit"></i> Edit User Details</h3>
+
+                <button class="modal-close" onclick="closeEditModal()"><i class="fas fa-times"></i></button>
+
+            </div>
+
+            <form id="editForm" onsubmit="saveUserEdit(event)">
+
+                <input type="hidden" id="editUserId">
+
+                <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+
+                    <div class="form-group">
+
+                        <label>Username</label>
+
+                        <input type="text" id="editUsername" required>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Email *</label>
+
+                        <input type="email" id="editEmail" required>
+
+                    </div>
+
+                </div>
+
+                <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+
+                    <div class="form-group">
+
+                        <label>Phone</label>
+
+                        <input type="tel" id="editPhone" placeholder="+91 98765 43210">
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Balance (₹)</label>
+                        <input type="number" id="editBalance" step="0.01" min="0" required>
+
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button type="button" class="btn-cancel" onclick="closeEditModal()">Cancel</button>
+
+                    <button type="submit" class="btn-confirm"><i class="fas fa-save"></i> Save Changes</button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    
+
+    <!-- Reset Password Modal -->
+
+    <div class="modal" id="resetModal">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h3><i class="fas fa-key"></i> Reset Password</h3>
+
+                <button class="modal-close" onclick="closeResetModal()"><i class="fas fa-times"></i></button>
+
+            </div>
+
+            <div style="margin-bottom:1.5rem">
+
+                <p style="color:#64748b;margin-bottom:1rem">Reset password for:</p>
+
+                <p style="font-weight:600;font-size:1.1rem" id="resetUsername">Username</p>
+
+                <div style="background:#fef3c7;border-left:4px solid #f59e0b;padding:1rem;margin:1rem 0;border-radius:0 8px 8px 0">
+
+                    <strong style="color:#92400e">New Password:</strong> 
+
+                    <code style="background:white;padding:0.25rem 0.5rem;border-radius:4px;margin-left:0.5rem" id="newPassword">TempPass123!</code>
+
+                </div>
+
+                <p style="color:#64748b;font-size:0.9rem">The user will be required to change this password on next login.</p>
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button class="btn-cancel" onclick="closeResetModal()">Cancel</button>
+
+                <button class="btn-confirm" onclick="confirmResetPassword()"><i class="fas fa-check"></i> Confirm Reset</button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    
+
+    <!-- Portfolio Modal (Live Data) -->
+
+    <div class="modal" id="portfolioModal">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h3><i class="fas fa-chart-pie"></i> Portfolio - <span id="portfolioUsername"></span></h3>
+
+                <button class="modal-close" onclick="closePortfolioModal()"><i class="fas fa-times"></i></button>
+
+            </div>
+
+            <div id="portfolioLoading" style="text-align:center;padding:2rem;color:#64748b">
+
+                <i class="fas fa-spinner fa-spin" style="font-size:2rem;margin-bottom:1rem"></i>
+
+                <p>Loading portfolio...</p>
+
+            </div>
+
+            <div id="portfolioContent" style="display:none">
+
+                <div class="portfolio-summary">
+
+                    <div class="summary-card">
+
+                        <h4>Total Value</h4>
+
+                        <div class="value" id="portfolioTotalValue">₹0.00</div>
+                    </div>
+
+                    <div class="summary-card">
+
+                        <h4>Total Profit/Loss</h4>
+
+                        <div class="value" id="portfolioProfitLoss">₹0.00</div>
+                    </div>
+
+                    <div class="summary-card">
+
+                        <h4>Holdings</h4>
+
+                        <div class="value" id="portfolioHoldingsCount">0</div>
+
+                    </div>
+
+                </div>
+
+                <table class="portfolio-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Symbol</th>
+
+                            <th>Quantity</th>
+
+                            <th>Avg Buy</th>
+
+                            <th>Current</th>
+
+                            <th>Value</th>
+
+                            <th>P/L</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="portfolioTableBody">
+
+                        <!-- Dynamic content -->
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button class="btn-cancel" onclick="closePortfolioModal()">Close</button>
+
+                <button class="btn-confirm" onclick="refreshPortfolio()"><i class="fas fa-sync"></i> Refresh</button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    
+
+    <!-- Transaction History Modal -->
+
+    <div class="modal" id="transactionModal">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h3><i class="fas fa-exchange-alt"></i> Transaction History - <span id="transactionUsername"></span></h3>
+
+                <button class="modal-close" onclick="closeTransactionModal()"><i class="fas fa-times"></i></button>
+
+            </div>
+
+            <div id="transactionLoading" style="text-align:center;padding:2rem;color:#64748b">
+
+                <i class="fas fa-spinner fa-spin" style="font-size:2rem;margin-bottom:1rem"></i>
+
+                <p>Loading transactions...</p>
+
+            </div>
+
+            <div id="transactionContent" style="display:none">
+
+                <table class="transaction-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Date</th>
+
+                            <th>Type</th>
+
+                            <th>Stock</th>
+
+                            <th>Qty</th>
+
+                            <th>Price</th>
+
+                            <th>Total</th>
+
+                            <th>P/L</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="transactionTableBody">
+
+                        <!-- Dynamic content -->
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button class="btn-cancel" onclick="closeTransactionModal()">Close</button>
+
+                <button class="btn-confirm" onclick="refreshTransactions()"><i class="fas fa-sync"></i> Refresh</button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    
+
+    <script>
+
+        let currentUserId = null;
+
+        
+
+        // View user portfolio (LIVE DATA) - WITH ERROR HANDLING
+
+        async function viewPortfolio(userId, username) {
+
+            currentUserId = userId;
+
+            document.getElementById('portfolioUsername').textContent = username;
+
+            document.getElementById('portfolioModal').classList.add('active');
+
+            document.getElementById('portfolioLoading').style.display = 'block';
+
+            document.getElementById('portfolioContent').style.display = 'none';
+
+            
+
+            try {
+
+                // Fetch live portfolio data from API with admin_view parameter
+
+                const res = await fetch(`/api/portfolio?admin_view=1&user_id=${userId}`);
+
+                
+
+                // Check if response is JSON
+
+                const contentType = res.headers.get('content-type');
+
+                if (!contentType || !contentType.includes('application/json')) {
+
+                    const text = await res.text();
+
+                    console.error('Received HTML instead of JSON:', text.substring(0, 200));
+
+                    throw new Error('Server returned HTML instead of JSON. Check if endpoint exists.');
+
+                }
+
+                
+
+                const data = await res.json();
+
+                
+
+                if (res.ok) {
+
+                    // Update summary
+
+                    document.getElementById('portfolioTotalValue').textContent = `₹${data.total_value.toFixed(2)}`;
+                    
+
+                    const profitLoss = data.total_value - (data.holdings.reduce((sum, h) => sum + (h.quantity * h.avg_buy_price), 0));
+
+                    const profitEl = document.getElementById('portfolioProfitLoss');
+
+                    profitEl.textContent = `₹${profitLoss.toFixed(2)}`;
+                    profitEl.className = `value ${profitLoss >= 0 ? 'positive' : 'negative'}`;
+
+                    
+
+                    document.getElementById('portfolioHoldingsCount').textContent = data.holdings.length;
+
+                    
+
+                    // Populate table
+
+                    const tbody = document.getElementById('portfolioTableBody');
+
+                    tbody.innerHTML = '';
+
+                    
+
+                    data.holdings.forEach(holding => {
+
+                        const currentValue = holding.quantity * holding.current_price;
+
+                        const profitLoss = currentValue - (holding.quantity * holding.avg_buy_price);
+
+                        
+
+                        const row = document.createElement('tr');
+
+                        row.innerHTML = `
+
+                            <td><strong>${holding.symbol}</strong><br><small style="color:#64748b">${holding.name}</small></td>
+
+                            <td>${holding.quantity}</td>
+
+                            <td>₹${holding.avg_buy_price.toFixed(2)}</td>
+                            <td>₹${holding.current_price.toFixed(2)}</td>
+                            <td>₹${currentValue.toFixed(2)}</td>
+                            <td class="${profitLoss >= 0 ? 'profit-positive' : 'profit-negative'}">
+
+                                ${profitLoss >= 0 ? '+' : ''}₹${profitLoss.toFixed(2)}
+                            </td>
+
+                        `;
+
+                        tbody.appendChild(row);
+
+                    });
+
+                    
+
+                    document.getElementById('portfolioLoading').style.display = 'none';
+
+                    document.getElementById('portfolioContent').style.display = 'block';
+
+                } else {
+
+                    throw new Error(data.error || 'Failed to load portfolio');
+
+                }
+
+            } catch (err) {
+
+                console.error('Portfolio error:', err);
+
+                document.getElementById('portfolioLoading').innerHTML = `
+
+                    <p style="color:#ef4444">
+
+                        <i class="fas fa-exclamation-circle"></i> Error: ${err.message}<br>
+
+                        <small>Check console for details</small>
+
+                    </p>
+
+                `;
+
+            }
+
+        }
+
+        
+
+        function closePortfolioModal() {
+
+            document.getElementById('portfolioModal').classList.remove('active');
+
+            currentUserId = null;
+
+        }
+
+        
+
+        function refreshPortfolio() {
+
+            if (currentUserId) {
+
+                const username = document.getElementById('portfolioUsername').textContent;
+
+                viewPortfolio(currentUserId, username);
+
+            }
+
+        }
+
+        
+
+        // View user transactions - WITH ERROR HANDLING
+
+        async function viewTransactions(userId, username) {
+
+            currentUserId = userId;
+
+            document.getElementById('transactionUsername').textContent = username;
+
+            document.getElementById('transactionModal').classList.add('active');
+
+            document.getElementById('transactionLoading').style.display = 'block';
+
+            document.getElementById('transactionContent').style.display = 'none';
+
+            
+
+            try {
+
+                // Fetch transactions from API with admin_view parameter
+
+                const res = await fetch(`/api/orders?admin_view=1&user_id=${userId}`);
+
+                
+
+                // Check if response is JSON
+
+                const contentType = res.headers.get('content-type');
+
+                if (!contentType || !contentType.includes('application/json')) {
+
+                    const text = await res.text();
+
+                    console.error('Received HTML instead of JSON:', text.substring(0, 200));
+
+                    throw new Error('Server returned HTML instead of JSON. Check if endpoint exists.');
+
+                }
+
+                
+
+                const data = await res.json();
+
+                
+
+                if (res.ok) {
+
+                    // Populate table
+
+                    const tbody = document.getElementById('transactionTableBody');
+
+                    tbody.innerHTML = '';
+
+                    
+
+                    if (data.length === 0) {
+
+                        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;color:#64748b">No transactions found</td></tr>';
+
+                    } else {
+
+                        data.forEach(tx => {
+
+                            const row = document.createElement('tr');
+
+                            const date = new Date(tx.transaction_date).toLocaleString();
+
+                            const pricePerUnit = Number(tx.price_per_unit || 0);
+
+                            const totalAmount = Number(tx.total_amount || 0);
+                            const profitLoss = Number(tx.profit_loss || 0);
+                            const profitLossClass = profitLoss >= 0 ? 'profit-positive' : 'profit-negative';
+                            const profitLossLabel = tx.profit_loss_type || 'P/L';
+
+                            
+
+                            row.innerHTML = `
+
+                                <td>${date}</td>
+
+                                <td><span class="badge ${tx.transaction_type === 'BUY' ? 'badge-success' : 'badge-danger'}">${tx.transaction_type}</span></td>
+
+                                <td><strong>${tx.symbol}</strong><br><small style="color:#64748b">${tx.name}</small></td>
+
+                                <td>${tx.quantity}</td>
+
+                                <td>₹${pricePerUnit.toFixed(2)}</td>
+
+                                <td><strong>₹${totalAmount.toFixed(2)}</strong></td>
+
+                                <td class="${profitLossClass}">
+                                    ${profitLoss >= 0 ? '+' : '-'}₹${Math.abs(profitLoss).toFixed(2)}<br>
+                                    <small style="color:#64748b">${profitLossLabel}</small>
+                                </td>
+
+                            `;
+
+                            tbody.appendChild(row);
+
+                        });
+
+                    }
+
+                    
+
+                    document.getElementById('transactionLoading').style.display = 'none';
+
+                    document.getElementById('transactionContent').style.display = 'block';
+
+                } else {
+
+                    throw new Error(data.error || 'Failed to load transactions');
+
+                }
+
+            } catch (err) {
+
+                console.error('Transaction error:', err);
+
+                document.getElementById('transactionLoading').innerHTML = `
+
+                    <p style="color:#ef4444">
+
+                        <i class="fas fa-exclamation-circle"></i> Error: ${err.message}<br>
+
+                        <small>Check console for details</small>
+
+                    </p>
+
+                `;
+
+            }
+
+        }
+
+        
+
+        function closeTransactionModal() {
+
+            document.getElementById('transactionModal').classList.remove('active');
+
+            currentUserId = null;
+
+        }
+
+        
+
+        function refreshTransactions() {
+
+            if (currentUserId) {
+
+                const username = document.getElementById('transactionUsername').textContent;
+
+                viewTransactions(currentUserId, username);
+
+            }
+
+        }
+
+        
+
+        // Edit user - open modal with pre-filled data (ENHANCED)
+
+        function editUser(userId, username, email, phone, balance) {
+
+            document.getElementById('editUserId').value = userId;
+
+            document.getElementById('editUsername').value = username;
+
+            document.getElementById('editEmail').value = email;
+
+            document.getElementById('editPhone').value = phone || '';
+
+            document.getElementById('editBalance').value = balance;
+
+            document.getElementById('editModal').classList.add('active');
+
+        }
+
+        
+
+        function closeEditModal() {
+
+            document.getElementById('editModal').classList.remove('active');
+
+            document.getElementById('editForm').reset();
+
+        }
+
+        
+
+        // Save user edit (ENHANCED with phone)
+
+        async function saveUserEdit(e) {
+
+            e.preventDefault();
+
+            const userId = document.getElementById('editUserId').value;
+
+            const username = document.getElementById('editUsername').value;
+
+            const email = document.getElementById('editEmail').value;
+
+            const phone = document.getElementById('editPhone').value;
+
+            const balance = parseFloat(document.getElementById('editBalance').value);
+
+            
+
+            try {
+
+                const res = await fetch(`/admin/users/${userId}/edit`, {
+
+                    method: 'POST',
+
+                    headers: {'Content-Type': 'application/json'},
+
+                    body: JSON.stringify({ username, email, phone, balance })
+
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+
+                    alert('User updated successfully!');
+
+                    location.reload();
+
+                } else {
+
+                    alert('Error: ' + data.error);
+
+                }
+
+            } catch (err) {
+
+                alert('Error: ' + err.message);
+
+            }
+
+            closeEditModal();
+
+        }
+
+        
+
+        // Toggle user status (activate/deactivate)
+
+        async function toggleUserStatus(userId) {
+
+            const action = confirm('Toggle user account status?\n\nThis will activate/deactivate the account.') ? 'toggle' : null;
+
+            if (!action) return;
+
+            
+
+            try {
+
+                const res = await fetch(`/admin/users/${userId}/toggle`, { method: 'POST' });
+
+                const data = await res.json();
+
+                if (res.ok) {
+
+                    alert(data.message);
+
+                    location.reload();
+
+                } else {
+
+                    alert('Error: ' + data.error);
+
+                }
+
+            } catch (err) {
+
+                alert('Error: ' + err.message);
+
+            }
+
+        }
+
+        
+
+        // Reset password - open modal
+
+        function resetPassword(userId, username) {
+
+            document.getElementById('resetUsername').textContent = username;
+
+            document.getElementById('resetModal').dataset.userId = userId;
+
+            document.getElementById('resetModal').classList.add('active');
+
+        }
+
+        
+
+        function closeResetModal() {
+
+            document.getElementById('resetModal').classList.remove('active');
+
+        }
+
+        
+
+        // Confirm password reset
+
+        async function confirmResetPassword() {
+
+            const userId = document.getElementById('resetModal').dataset.userId;
+
+            try {
+
+                const res = await fetch(`/admin/users/${userId}/reset-password`, { method: 'POST' });
+
+                const data = await res.json();
+
+                if (res.ok) {
+
+                    alert(data.message + '\n\nTemp password: ' + data.temp_password);
+
+                    closeResetModal();
+
+                } else {
+
+                    alert('Error: ' + data.error);
+
+                }
+
+            } catch (err) {
+
+                alert('Error: ' + err.message);
+
+            }
+
+        }
+
+        
+
+        // Delete user
+
+        async function deleteUser(userId, username) {
+
+            if (!confirm(`Delete user "${username}" (ID: ${userId})?\n\nâš ï¸ This will permanently delete:\nâ€¢ User account\nâ€¢ All holdings\nâ€¢ All transactions\n\nThis action cannot be undone!`)) {
+
+                return;
+
+            }
+
+            
+
+            try {
+
+                const res = await fetch(`/admin/users/${userId}/delete`, { method: 'DELETE' });
+
+                const data = await res.json();
+
+                if (res.ok) {
+
+                    alert(data.message);
+
+                    location.reload();
+
+                } else {
+
+                    alert('Error: ' + data.error);
+
+                }
+
+            } catch (err) {
+
+                alert('Error: ' + err.message);
+
+            }
+
+        }
+
+        
+
+        // Close modals on outside click
+
+        document.querySelectorAll('.modal').forEach(modal => {
+
+            modal.addEventListener('click', (e) => {
+
+                if (e.target === modal) {
+
+                    modal.classList.remove('active');
+
+                }
+
+            });
+
+        });
+
+    </script>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+
+</html>
+

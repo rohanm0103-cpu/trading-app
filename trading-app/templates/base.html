@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}TradePro{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="{% block body_class %}{% endblock %}">
+    <nav class="navbar">
+        <div class="nav-brand">📈 TradePro</div>
+        <div class="nav-links">
+            {% if username %}
+                <span class="welcome">Welcome, {{ username }}</span>
+                <a href="{{ url_for('index') }}">Dashboard</a>
+                <a href="{{ url_for('portfolio') }}">Portfolio</a>
+                <button id="logoutBtn" class="btn-secondary">Logout</button>
+            {% endif %}
+        </div>
+    </nav>
+    
+    <main class="container {% block main_class %}{% endblock %}">
+        {% block content %}{% endblock %}
+    </main>
+    
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>n

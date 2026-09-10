@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Positions - TradeWise</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+.dashboard-layout {
+            display: flex;
+            min-height: 100vh;
+            position: relative;
+            background: radial-gradient(circle at top left, rgba(0, 198, 255, 0.12), transparent 20%),
+                        radial-gradient(circle at bottom right, rgba(168, 85, 247, 0.12), transparent 20%),
+                        linear-gradient(180deg, #04060d 0%, #0b1220 100%);
+            color: #e2e8f0;
+            overflow-x: hidden;
+        }
+
+        body.dashboard-layout::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.02), transparent),
+                        linear-gradient(rgba(255, 255, 255, 0.02), transparent);
+            pointer-events: none;
+            z-index: -2;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: rgba(15, 23, 42, 0.86);
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 2rem 1.25rem;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            backdrop-filter: blur(14px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            padding-bottom: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .sidebar-brand {
+            font-size: 1.55rem;
+            font-weight: 800;
+            color: #a855f7;
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            margin-bottom: 1rem;
+        }
+
+        .sidebar-profile {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 18px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .sidebar-profile:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .profile-pic {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            border: 2px solid rgba(168, 85, 247, 0.35);
+            background: linear-gradient(135deg, #0ea5e9, #a855f7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.1rem;
+            overflow: hidden;
+        }
+
+        .profile-pic img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .profile-info { flex: 1; display: none; }
+        .profile-name { font-weight: 700; font-size: 0.95rem; color: #fff; }
+        .profile-email, .profile-edit { font-size: 0.82rem; color: #94a3b8; display: none; }
+
+        .sidebar-menu { list-style: none; padding: 0; margin-top: 1rem; }
+        .sidebar-item { margin-bottom: 0.5rem; }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.95rem 1rem;
+            color: #cbd5e1;
+            text-decoration: none;
+            border-radius: 14px;
+            transition: all 0.25s;
+            border: 1px solid transparent;
+        }
+
+        .sidebar-link:hover, .sidebar-link.active {
+            background: rgba(59, 130, 246, 0.18);
+            color: #fff;
+            border-color: rgba(59, 130, 246, 0.28);
+        }
+
+        .sidebar-link.active { border-left: 4px solid #7c3aed; }
+        .sidebar-link i { width: 20px; text-align: center; }
+
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2.5rem 2.5rem 3rem;
+            min-height: 100vh;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .top-bar h1 {
+            font-size: 2rem;
+            color: #fff;
+            font-weight: 800;
+        }
+
+        .top-bar-actions { display: flex; gap: 1rem; align-items: center; }
+        .top-bar-actions span { color: #cbd5e1; }
+
+        .btn-logout {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            padding: 0.65rem 1.4rem;
+            border-radius: 999px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 12px 25px rgba(220, 38, 38, 0.25);
+        }
+
+        .btn-logout:hover { transform: translateY(-1px); box-shadow: 0 18px 35px rgba(220, 38, 38, 0.35); }
+
+        .content-section {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.12);
+            margin-bottom: 2rem;
+        }
+
+        .section-title, .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .section-title h2, .section-header h2 {
+            font-size: 1.5rem;
+            color: #fff;
+            font-weight: 700;
+        }
+
+        .section-title h2 i, .section-header h2 i { margin-right: 0.5rem; color: #7c3aed; }
+        .view-all { color: #60a5fa; text-decoration: none; font-weight: 600; }
+        .view-all:hover { text-decoration: underline; }
+
+        .funds-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.5rem; }
+        .fund-card { background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 22px; padding: 1.5rem; box-shadow: 0 18px 45px rgba(0, 0, 0, 0.1); cursor: pointer; transition: transform 0.3s, box-shadow 0.3s; }
+        .fund-card:hover { transform: translateY(-4px); box-shadow: 0 28px 60px rgba(0, 0, 0, 0.18); }
+        .fund-logo { width: 52px; height: 52px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: 700; color: white; }
+        .fund-info h4 { font-size: 1.05rem; color: #fff; margin-bottom: 0.25rem; line-height: 1.3; }
+        .fund-info p { font-size: 0.9rem; color: #94a3b8; }
+        .fund-performance { display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255, 255, 255, 0.08); }
+        .fund-return { font-size: 1.25rem; font-weight: 700; color: #7dd3fc; }
+        .fund-return.down { color: #fda4af; }
+        .fund-period { font-size: 0.85rem; color: #94a3b8; }
+
+        .positions-preview-list { display: grid; gap: 1rem; }
+        .position-preview-item { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 1.1rem 1.3rem; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 18px; background: rgba(255, 255, 255, 0.04); }
+        .position-preview-main h4 { margin: 0 0 0.25rem 0; color: #fff; font-size: 1rem; }
+        .position-preview-main p { margin: 0; color: #94a3b8; font-size: 0.95rem; }
+        .position-preview-metrics strong { display: block; color: #fff; font-size: 1rem; }
+        .position-preview-empty { text-align: center; padding: 2rem; border: 1px dashed rgba(148, 163, 184, 0.3); border-radius: 18px; color: #94a3b8; background: rgba(255, 255, 255, 0.04); }
+
+        .security-footer { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.08); padding: 2rem; border-radius: 24px; }
+        .security-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem; }
+        .security-item { display: flex; align-items: flex-start; gap: 0.75rem; }
+        .security-item i { color: #34d399; font-size: 1.2rem; margin-top: 0.25rem; }
+        .security-item h4 { font-size: 0.98rem; font-weight: 700; color: #fff; margin-bottom: 0.25rem; }
+        .security-item p { font-size: 0.9rem; color: #94a3b8; line-height: 1.5; }
+        .security-badges { display: flex; flex-wrap: wrap; gap: 0.9rem; margin-bottom: 1.5rem; }
+        .security-badge { display: flex; align-items: center; gap: 0.5rem; padding: 0.65rem 1rem; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 999px; font-size: 0.88rem; color: #e2e8f0; }
+        .security-badge i { color: #34d399; }
+        .disclaimer { background: rgba(255, 255, 255, 0.05); border-left: 4px solid #f59e0b; padding: 1rem; border-radius: 16px; font-size: 0.9rem; color: #cbd5e1; line-height: 1.6; }
+        .copyright { text-align: center; padding-top: 1.5rem; margin-top: 1.5rem; border-top: 1px solid rgba(255, 255, 255, 0.08); font-size: 0.9rem; color: #94a3b8; }
+
+        @media (max-width: 1024px) {
+            .sidebar { width: 80px; padding: 1.5rem; }
+            .sidebar-header, .profile-info, .sidebar-link span { display: none; }
+            .sidebar-brand { justify-content: center; }
+            .sidebar-link { justify-content: center; padding: 1rem; }
+            .main-content { margin-left: 80px; padding: 1.5rem; }
+            .positions-table { overflow-x: auto; }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-layout { flex-direction: column; }
+            .sidebar { width: 100%; height: auto; position: relative; }
+            .sidebar-menu { display: flex; overflow-x: auto; padding: 0.5rem 0; gap: 0.75rem; }
+            .sidebar-item { margin: 0; }
+            .sidebar-link { padding: 0.85rem; white-space: nowrap; }
+            .main-content { margin-left: 0; padding: 1rem; }
+            .table-actions, .detail-grid { grid-template-columns: 1fr; }
+        }.positions-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-bottom:2rem}.summary-card{background:rgba(255,255,255,0.06);padding:1.25rem;border-radius:12px;box-shadow:0 2px 4px rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.08)}.summary-card h4{color:#94a3b8;font-size:0.9rem;margin-bottom:0.5rem}.summary-card p{font-size:1.5rem;font-weight:700;color:#e2e8f0}.summary-card p.profit{color:#4ade80}.summary-card p.loss{color:#f87171}.positions-table{background:rgba(255,255,255,0.06);border-radius:12px;overflow:hidden;box-shadow:0 2px 4px rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.08)}.table-actions{display:flex;gap:0.5rem;justify-content:flex-end;padding:1rem;border-bottom:1px solid rgba(255,255,255,0.08)}.btn-filter{padding:0.5rem 1rem;border:1px solid rgba(255,255,255,0.08);border-radius:6px;background:rgba(255,255,255,0.05);cursor:pointer;color:#e2e8f0}.btn-filter.active{background:#2563eb;color:white;border-color:#2563eb}table{width:100%;border-collapse:collapse}thead{background:rgba(255,255,255,0.03)}th{padding:1rem;text-align:left;font-weight:600;color:#94a3b8;border-bottom:2px solid rgba(255,255,255,0.08)}td{padding:1rem;border-bottom:1px solid rgba(255,255,255,0.08);color:#e2e8f0}tr:hover{background:rgba(255,255,255,0.05)}.stock-info{display:flex;align-items:center;gap:0.75rem}.stock-symbol{font-weight:600;color:#e2e8f0}.stock-name{color:#94a3b8;font-size:0.9rem}.price-up{color:#4ade80;font-weight:600}.price-down{color:#f87171;font-weight:600}.btn-view{padding:0.4rem 0.8rem;border:none;border-radius:6px;background:#2563eb;color:white;font-size:0.85rem;cursor:pointer;margin-right:0.5rem}.btn-view:hover{background:#1d4ed8}.btn-close{padding:0.4rem 0.8rem;border:none;border-radius:6px;background:#ef4444;color:white;font-size:0.85rem;cursor:pointer}.btn-close:hover{background:#dc2626}.modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,0.7);display:none;align-items:center;justify-content:center;z-index:1000;padding:1rem}.modal-overlay.active{display:flex}.modal-box{background:rgba(15,23,42,0.95);border-radius:16px;max-width:520px;width:100%;box-shadow:0 20px 50px rgba(15,23,42,0.4);border:1px solid rgba(255,255,255,0.08);overflow:hidden}.modal-header{display:flex;justify-content:space-between;align-items:center;padding:1.25rem 1.5rem;border-bottom:1px solid rgba(255,255,255,0.08)}.modal-header h3{margin:0;color:#e2e8f0}.modal-close-btn{background:none;border:none;color:#94a3b8;font-size:1.25rem;cursor:pointer}.modal-close-btn:hover{color:#f87171}.modal-body{padding:1.5rem}.detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}.detail-card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1rem}.detail-card label{display:block;font-size:0.8rem;color:#94a3b8;margin-bottom:0.35rem}.detail-card strong{font-size:1rem;color:#e2e8f0}.empty-state{text-align:center;padding:3rem;color:#64748b}.empty-state i{font-size:3rem;margin-bottom:1rem;display:block;color:#cbd5e1}@media(max-width:1024px){.sidebar{width:70px}.sidebar-header span,.profile-info,.sidebar-link span{display:none}.sidebar-brand{justify-content:center}.sidebar-link{justify-content:center;padding:1rem}.main-content{margin-left:70px}}@media(max-width:768px){.dashboard-layout{flex-direction:column}.sidebar{width:100%;height:auto;position:relative}.sidebar-menu{display:flex;overflow-x:auto;padding:0.5rem 0;gap:0.5rem}.sidebar-item{margin:0}.sidebar-link{padding:0.75rem;white-space:nowrap}.main-content{margin-left:0;padding:1rem}.positions-table{overflow-x:auto}table{min-width:700px}.detail-grid{grid-template-columns:1fr}}
+    </style>
+</head>
+<body class="dashboard-layout">
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-brand"><i class="fas fa-chart-line"></i><span>TradeWise</span></div>
+            
+        </div>
+        <ul class="sidebar-menu">
+            <li class="sidebar-item"><a href="{{ url_for('dashboard') }}" class="sidebar-link"><i class="fas fa-home"></i><span>Dashboard</span></a></li>
+            <li class="sidebar-item"><a href="{{ url_for('explore') }}" class="sidebar-link"><i class="fas fa-compass"></i><span>Explore</span></a></li>
+            <li class="sidebar-item"><a href="{{ url_for('holdings') }}" class="sidebar-link"><i class="fas fa-briefcase"></i><span>Holdings</span></a></li>
+            <li class="sidebar-item"><a href="{{ url_for('positions') }}" class="sidebar-link active"><i class="fas fa-chart-area"></i><span>Positions</span></a></li>
+            <li class="sidebar-item"><a href="{{ url_for('orders') }}" class="sidebar-link"><i class="fas fa-list"></i><span>Orders</span></a></li>
+            <li class="sidebar-item"><a href="{{ url_for('watchlist_my') }}" class="sidebar-link"><i class="fas fa-star"></i><span>My Watchlist</span></a></li>
+            <li class="sidebar-item"><a href="{{ url_for('watchlist_all') }}" class="sidebar-link"><i class="fas fa-list-ul"></i><span>All Watchlists</span></a></li>
+            <li class="sidebar-item" style="margin-top:2rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,0.1)"><a href="{{ url_for('profile_edit') }}" class="sidebar-link"><i class="fas fa-user-cog"></i><span>Settings</span></a></li>
+            <li class="sidebar-item"><a href="{{ url_for('logout') }}" class="sidebar-link" style="color:#f87171"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a></li>
+        </ul>
+    </aside>
+    <main class="main-content">
+        <div class="top-bar"><h1><i class="fas fa-chart-area"></i> Open Positions</h1></div>
+        <div class="positions-summary">
+            <div class="summary-card"><h4>Open Positions</h4><p id="openCount">0</p></div>
+            <div class="summary-card"><h4>Total Invested</h4><p id="totalInvested">₹0.00</p></div>
+            <div class="summary-card"><h4>Current Value</h4><p id="currentValue">₹0.00</p></div>
+            <div class="summary-card"><h4>Unrealized P/L</h4><p id="unrealizedPL" class="profit">₹0.00</p></div>
+        </div>
+        <div class="positions-table">
+            <div class="table-actions">
+                <button class="btn-filter active" onclick="filterPositionsPage('all', this)">All</button>
+                <button class="btn-filter" onclick="filterPositionsPage('profit', this)">Profit</button>
+                <button class="btn-filter" onclick="filterPositionsPage('loss', this)">Loss</button>
+            </div>
+            <table>
+                <thead><tr><th>Position</th><th>Type</th><th>Quantity</th><th>Entry Price</th><th>Current Price</th><th>Market Value</th><th>Unrealized P/L</th><th>Actions</th></tr></thead>
+                <tbody id="positionsTable">
+                    <tr>
+                        <td colspan="8" class="empty-state">
+                            <i class="fas fa-chart-line"></i>
+                            <p>No open positions</p>
+                            <p style="font-size:0.9rem;margin-top:0.5rem">Start trading to open positions</p>
+                            <a href="{{ url_for('explore') }}" id="exploreLink" style="color:#2563eb;text-decoration:none;font-weight:500;margin-top:1rem;display:inline-block">Explore Stocks →</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+    <div class="modal-overlay" id="positionModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 id="positionModalTitle">Position Details</h3>
+                <button class="modal-close-btn" type="button" onclick="closePositionModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="detail-grid">
+                    <div class="detail-card"><label>Stock</label><strong id="detailSymbol">-</strong></div>
+                    <div class="detail-card"><label>Company</label><strong id="detailName">-</strong></div>
+                    <div class="detail-card"><label>Quantity</label><strong id="detailQuantity">-</strong></div>
+                    <div class="detail-card"><label>Average Buy Price</label><strong id="detailAvgBuy">-</strong></div>
+                    <div class="detail-card"><label>Current Price</label><strong id="detailCurrentPrice">-</strong></div>
+                    <div class="detail-card"><label>Current Value</label><strong id="detailCurrentValue">-</strong></div>
+                    <div class="detail-card"><label>Unrealized P/L</label><strong id="detailProfitLoss">-</strong></div>
+                    <div class="detail-card"><label>First Buy</label><strong id="detailOpenedAt">-</strong></div>
+                    <div class="detail-card"><label>Last Buy</label><strong id="detailLastBuyAt">-</strong></div>
+                    <div class="detail-card"><label>Status</label><strong>Open Position</strong></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Get explore URL from the DOM (avoids Jinja2 in JS string)
+        const exploreUrl = document.getElementById('exploreLink')?.href || '/explore';
+        
+        let allPositions = [];
+        let activeFilter = 'all';
+        
+        // ===== INR FORMATTING FUNCTIONS =====
+        function formatINR(amount) {
+            if (amount >= 10000000) {
+                return '₹' + (amount / 10000000).toFixed(2) + ' Cr';
+            } else if (amount >= 100000) {
+                return '₹' + (amount / 100000).toFixed(2) + ' L';
+            } else if (amount >= 1000) {
+                return '₹' + amount.toLocaleString('en-IN');
+            }
+            return '₹' + amount.toFixed(2);
+        }
+        
+        function formatRupees(amount) {
+            return '₹' + amount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+        
+        function formatDateTime(value) {
+            if (!value) return 'Not available';
+            const date = new Date(value);
+            if (Number.isNaN(date.getTime())) return 'Not available';
+            return date.toLocaleString('en-IN');
+        }
+
+        function renderFilteredPositions() {
+            let filtered = allPositions;
+            if (activeFilter === 'profit') {
+                filtered = allPositions.filter(p => p.current_value >= (p.quantity * p.avg_buy_price));
+            } else if (activeFilter === 'loss') {
+                filtered = allPositions.filter(p => p.current_value < (p.quantity * p.avg_buy_price));
+            }
+            renderPositionRows(filtered);
+            updatePositionsSummary(allPositions);
+        }
+
+        async function fetchPositions(){
+            try{
+                const res = await fetch(`/api/portfolio?_=${Date.now()}`, { cache: 'no-store' });
+                if(!res.ok) throw new Error('Failed');
+                const data = await res.json();
+                
+                // Convert USD positions to INR if needed
+                if (data.holdings) {
+                    allPositions = data.holdings.map(p => {
+                        const priceINR = p.currency === 'USD' ? p.current_price * 83 : p.current_price;
+                        const avgBuyINR = p.currency === 'USD' ? p.avg_buy_price * 83 : p.avg_buy_price;
+                        return {
+                            ...p,
+                            current_price: priceINR,
+                            avg_buy_price: avgBuyINR,
+                            current_value: p.quantity * priceINR,
+                            currency: 'INR'
+                        };
+                    });
+                } else {
+                    allPositions = [];
+                }
+                
+                renderFilteredPositions();
+                updatePositionsSummary(allPositions);
+            } catch(e){
+                console.error('Error:', e);
+            }
+        }
+
+        async function refreshLivePrices() {
+            try {
+                if (!allPositions.length) return;
+
+                const res = await fetch(`/api/stocks?_=${Date.now()}`, { cache: 'no-store' });
+                if (!res.ok) throw new Error('Failed to fetch live prices');
+                const stocks = await res.json();
+
+                allPositions = allPositions.map(position => {
+                    const liveStock = stocks.find(stock => stock.symbol === position.symbol);
+                    if (!liveStock) return position;
+
+                    const livePrice = liveStock.currency === 'USD'
+                        ? parseFloat(liveStock.current_price) * 83
+                        : parseFloat(liveStock.current_price);
+                    const currentValue = position.quantity * livePrice;
+
+                    return {
+                        ...position,
+                        current_price: livePrice,
+                        current_value: currentValue
+                    };
+                });
+
+                renderFilteredPositions();
+                updatePositionsSummary(allPositions);
+            } catch (e) {
+                console.error('Live position update error:', e);
+            }
+        }
+        
+        function renderPositionRows(positions){
+            const tbody = document.getElementById('positionsTable');
+            
+            if(!positions || positions.length === 0){
+                tbody.innerHTML = `<tr><td colspan="8" class="empty-state"><i class="fas fa-chart-line"></i><p>No open positions</p><p style="font-size:0.9rem;margin-top:0.5rem">Start trading to open positions</p><a href="${exploreUrl}" style="color:#2563eb;text-decoration:none;font-weight:500;margin-top:1rem;display:inline-block">Explore Stocks →</a></td></tr>`;
+                return;
+            }
+            
+            tbody.innerHTML = positions.map(p => {
+                const pl = p.current_value - (p.quantity * p.avg_buy_price);
+                const plClass = pl >= 0 ? 'price-up' : 'price-down';
+                const plSign = pl >= 0 ? '+' : '';
+                
+                return `<tr>
+                    <td><div class="stock-info"><div><div class="stock-symbol">${p.symbol}</div><div class="stock-name">${p.name}</div></div></div></td>
+                    <td><span style="background:#dbeafe;color:#1e40af;padding:0.25rem 0.75rem;border-radius:20px;font-size:0.85rem;font-weight:500">Long</span></td>
+                    <td>${p.quantity}</td>
+                    <td>${formatRupees(p.avg_buy_price)}</td>
+                    <td class="${plClass}">${formatRupees(p.current_price)}</td>
+                    <td>${formatRupees(p.current_value)}</td>
+                    <td class="${plClass}">${plSign}${formatRupees(pl)}</td>
+                    <td><button class="btn-view" onclick="viewPosition('${p.symbol}')">View</button><button class="btn-close" onclick="closePosition('${p.symbol}')">Close</button></td>
+                </tr>`;
+            }).join('');
+        }
+        
+        function updatePositionsSummary(positions){
+            document.getElementById('openCount').textContent = positions.length || 0;
+            
+            let totalInvested = 0, currentValue = 0;
+            positions.forEach(p => {
+                totalInvested += p.quantity * p.avg_buy_price;
+                currentValue += p.current_value;
+            });
+            
+            // Format with INR
+            document.getElementById('totalInvested').textContent = formatRupees(totalInvested);
+            document.getElementById('currentValue').textContent = formatRupees(currentValue);
+            
+            const pl = currentValue - totalInvested;
+            const plEl = document.getElementById('unrealizedPL');
+            plEl.textContent = (pl >= 0 ? '+' : '') + formatRupees(Math.abs(pl));
+            plEl.className = pl >= 0 ? 'profit' : 'loss';
+        }
+        
+        function filterPositionsPage(type, button){
+            activeFilter = type;
+            document.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active'));
+            if (button) button.classList.add('active');
+            renderFilteredPositions();
+        }
+        
+        function closePosition(symbol){
+            if(confirm(`Close position for ${symbol}?`)){
+                alert(`✅ Position for ${symbol} closed successfully!`);
+                fetchPositions();
+                // Trigger balance update for dashboard
+                window.dispatchEvent(new Event('balanceUpdated'));
+            }
+        }
+        
+        function viewPosition(symbol) {
+            const position = allPositions.find(p => p.symbol === symbol);
+            if (!position) return;
+
+            const pnl = position.current_value - (position.quantity * position.avg_buy_price);
+            document.getElementById('positionModalTitle').textContent = `${position.symbol} Position Details`;
+            document.getElementById('detailSymbol').textContent = position.symbol;
+            document.getElementById('detailName').textContent = position.name;
+            document.getElementById('detailQuantity').textContent = position.quantity;
+            document.getElementById('detailAvgBuy').textContent = formatRupees(position.avg_buy_price);
+            document.getElementById('detailCurrentPrice').textContent = formatRupees(position.current_price);
+            document.getElementById('detailCurrentValue').textContent = formatRupees(position.current_value);
+            document.getElementById('detailProfitLoss').textContent = `${pnl >= 0 ? '+' : '-'}${formatRupees(Math.abs(pnl))}`;
+            document.getElementById('detailProfitLoss').style.color = pnl >= 0 ? '#16a34a' : '#dc2626';
+            document.getElementById('detailOpenedAt').textContent = formatDateTime(position.opened_at);
+            document.getElementById('detailLastBuyAt').textContent = formatDateTime(position.last_buy_at);
+            document.getElementById('positionModal').classList.add('active');
+        }
+
+        function closePositionModal() {
+            document.getElementById('positionModal').classList.remove('active');
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await fetchPositions();
+            setInterval(refreshLivePrices, 5000);
+            setInterval(fetchPositions, 30000);
+        });
+
+        document.getElementById('positionModal').addEventListener('click', (event) => {
+            if (event.target.id === 'positionModal') {
+                closePositionModal();
+            }
+        });
+    </script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

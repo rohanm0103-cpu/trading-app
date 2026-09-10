@@ -1,0 +1,548 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Management - Admin</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* Copy ALL styles from admin_dashboard.html here */
+        .admin-layout{display:flex;min-height:100vh}.sidebar{width:260px;background:linear-gradient(180deg,#1e293b 0%,#0f172a 100%);color:white;padding:1.5rem 0;position:fixed;height:100vh;overflow-y:auto;z-index:100}.sidebar-header{padding:0 1.5rem 1.5rem 1.5rem;border-bottom:1px solid rgba(255,255,255,0.1);margin-bottom:1.5rem}.sidebar-brand{font-size:1.5rem;font-weight:700;color:#3b82f6;display:flex;align-items:center;gap:0.5rem}.sidebar-brand i{color:#D4AF37}.sidebar-menu{list-style:none;padding:0 1rem}.sidebar-item{margin-bottom:0.5rem}.sidebar-link{display:flex;align-items:center;gap:0.75rem;padding:0.875rem 1rem;color:#cbd5e1;text-decoration:none;border-radius:8px;transition:all 0.3s;font-weight:500}.sidebar-link:hover,.sidebar-link.active{background:rgba(59,130,246,0.2);color:#60a5fa}.sidebar-link.active{background:rgba(59,130,246,0.3);color:white;border-left:3px solid #3b82f6}.sidebar-link i{width:20px;text-align:center}.main-content{flex:1;margin-left:260px;padding:2rem}.top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid #e2e8f0}.top-bar h1{font-size:1.8rem;color:#1e293b;font-weight:700}.top-bar-actions{display:flex;gap:1rem;align-items:center}.btn-logout{background:#ef4444;color:white;padding:0.5rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:500;transition:background 0.3s}.btn-logout:hover{background:#dc2626}.search-bar{display:flex;gap:1rem;margin-bottom:1.5rem}.search-bar input{flex:1;padding:0.75rem 1rem;border:2px solid #e2e8f0;border-radius:8px;font-size:1rem}.search-bar input:focus{outline:none;border-color:#3b82f6}.search-bar button{padding:0.75rem 1.5rem;background:#3b82f6;color:white;border:none;border-radius:8px;cursor:pointer}.search-bar button:hover{background:#2563eb}.content-section{background:white;border-radius:12px;padding:2rem;box-shadow:0 2px 4px rgba(0,0,0,0.05);margin-bottom:2rem}.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem}.section-header h2{font-size:1.4rem;color:#1e293b;font-weight:600}.section-header h2 i{margin-right:0.5rem;color:#3b82f6}.data-table{width:100%;border-collapse:collapse}.data-table thead{background:#f8fafc}.data-table th{padding:1rem;text-align:left;font-weight:600;color:#475569;border-bottom:2px solid #e2e8f0}.data-table td{padding:1rem;border-bottom:1px solid #e2e8f0;color:#334155}.data-table tbody tr:hover{background:#f8fafc}.user-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#60a5fa);display:inline-flex;align-items:center;justify-content:center;color:white;font-weight:600;margin-right:0.75rem}.user-info{display:flex;align-items:center}.badge{padding:0.25rem 0.75rem;border-radius:20px;font-size:0.85rem;font-weight:500}.badge-success{background:#dcfce7;color:#166534}.badge-warning{background:#fef3c7;color:#92400e}.badge-danger{background:#fee2e2;color:#991b1b}.action-btn{padding:0.4rem 0.8rem;border:none;border-radius:6px;cursor:pointer;font-size:0.85rem;transition:all 0.3s;margin-right:0.5rem}.btn-view{background:#3b82f6;color:white}.btn-view:hover{background:#2563eb}.btn-edit{background:#10b981;color:white}.btn-edit:hover{background:#059669}.btn-delete{background:#ef4444;color:white}.btn-delete:hover{background:#dc2626}.btn-toggle{background:#6b7280;color:white}.btn-toggle:hover{background:#4b5563}.btn-add{background:#22c55e;color:white}.btn-add:hover{background:#16a34a}.btn-upload{background:#8b5cf6;color:white}.btn-upload:hover{background:#7c3aed}@media(max-width:1024px){.sidebar{width:70px}.sidebar-header span,.sidebar-link span{display:none}.sidebar-brand{justify-content:center}.sidebar-link{justify-content:center;padding:1rem}.main-content{margin-left:70px}}@media(max-width:768px){.admin-layout{flex-direction:column}.sidebar{width:100%;height:auto;position:relative}.sidebar-menu{display:flex;overflow-x:auto;padding:0.5rem 0;gap:0.5rem}.sidebar-item{margin:0}.sidebar-link{padding:0.75rem;white-space:nowrap}.main-content{margin-left:0;padding:1rem}}
+
+        /* Modal Styles */
+        .modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);display:none;justify-content:center;align-items:center;z-index:1000}.modal.active{display:flex}.modal-content{background:white;border-radius:12px;padding:2rem;width:90%;max-width:600px;max-height:90vh;overflow-y:auto;animation:slideUp 0.3s ease}@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid #e2e8f0}.modal-header h3{font-size:1.3rem;color:#1e293b;font-weight:600}.modal-close{background:none;border:none;font-size:1.5rem;color:#64748b;cursor:pointer}.modal-close:hover{color:#ef4444}.form-group{margin-bottom:1.25rem}.form-group label{display:block;margin-bottom:0.5rem;color:#334155;font-weight:500}.form-group input,.form-group select{width:100%;padding:0.75rem;border:2px solid #e2e8f0;border-radius:8px;font-size:1rem}.form-group input:focus,.form-group select:focus{outline:none;border-color:#3b82f6}.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}.modal-footer{display:flex;gap:1rem;justify-content:flex-end;margin-top:2rem}.btn-cancel{padding:0.75rem 1.5rem;border:1px solid #e2e8f0;border-radius:8px;background:white;color:#334155;font-weight:500;cursor:pointer}.btn-cancel:hover{background:#f1f5f9}.btn-confirm{padding:0.75rem 1.5rem;border:none;border-radius:8px;background:#3b82f6;color:white;font-weight:500;cursor:pointer}.btn-confirm:hover{background:#2563eb}
+        
+        /* Settings Panel */
+        .settings-panel{background:#f8fafc;border-radius:12px;padding:1.5rem;margin-bottom:2rem}.settings-panel h3{font-size:1.1rem;color:#1e293b;margin-bottom:1rem}.settings-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem}.setting-item{display:flex;flex-direction:column;gap:0.5rem}.setting-item label{font-size:0.9rem;color:#64748b}.setting-item input,.setting-item select{padding:0.5rem 0.75rem;border:2px solid #e2e8f0;border-radius:6px;font-size:1rem}
+        .market-time-card{background:linear-gradient(135deg,#dbeafe,#bfdbfe 52%,#e0f2fe);color:#0f172a;border:1px solid #bfdbfe;border-radius:12px;padding:1rem 1.25rem;margin-bottom:1rem;display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;box-shadow:0 14px 32px rgba(59,130,246,0.12)}.market-time-card .time-label{font-size:0.85rem;color:#475569;text-transform:uppercase;letter-spacing:.08em}.market-time-card .time-value{font-size:1.4rem;font-weight:700;color:#0f172a}.market-time-card .time-meta{font-size:.95rem;color:#1d4ed8;font-weight:600}
+    </style>
+</head>
+<body class="admin-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header"><div class="sidebar-brand"><i class="fas fa-shield-alt"></i><span>Admin</span></div></div>
+        <ul class="sidebar-menu">
+            <li class="sidebar-item"><a href="{{ url_for('admin_dashboard') }}" class="sidebar-link"><i class="fas fa-home"></i><span>Dashboard</span></a></li>
+            <li class="sidebar-item"><a href="{{ url_for('admin_users') }}" class="sidebar-link"><i class="fas fa-users"></i><span>User Management</span></a></li>
+            <li class="sidebar-item"><a href="{{ url_for('admin_stocks') }}" class="sidebar-link active"><i class="fas fa-chart-line"></i><span>Stock Management</span></a></li>
+            <li class="sidebar-item"><a href="{{ url_for('admin_transactions') }}" class="sidebar-link"><i class="fas fa-exchange-alt"></i><span>Transaction Management</span></a></li>
+            <li class="sidebar-item"><a href="{{ url_for('admin_analytics') }}" class="sidebar-link"><i class="fas fa-chart-bar"></i><span>Analytics & Reports</span></a></li>
+            <li class="sidebar-item"><a href="{{ url_for('admin_funds') }}" class="sidebar-link"><i class="fas fa-wallet"></i><span>Fund Management</span></a></li>
+            <li class="sidebar-item"><a href="{{ url_for('admin_settings') }}" class="sidebar-link"><i class="fas fa-cog"></i><span>Admin Controls</span></a></li>
+            <li class="sidebar-item" style="margin-top:2rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,0.1)"><a href="{{ url_for('logout') }}" class="sidebar-link" style="color:#f87171"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a></li>
+        </ul>
+    </aside>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="top-bar">
+            <h1><i class="fas fa-chart-line"></i> Stock Management</h1>
+            <div class="top-bar-actions">
+                <button class="action-btn btn-add" onclick="openAddModal()"><i class="fas fa-plus"></i> Add New Stock</button>
+                <button class="action-btn btn-upload" onclick="openUploadModal()"><i class="fas fa-file-csv"></i> Upload CSV</button>
+            </div>
+        </div>
+        
+        <!-- Market Settings -->
+        <div class="content-section">
+            <div class="section-header">
+                <h2><i class="fas fa-cog"></i> Market Settings</h2>
+            </div>
+            <div class="market-time-card">
+                <div>
+                    <div class="time-label">Current Market Time</div>
+                    <div class="time-value" id="currentMarketTime">{{ current_market_time.strftime('%Y-%m-%d %H:%M:%S') }}</div>
+                </div>
+            </div>
+            <div class="settings-panel">
+                <h3>Trading Hours</h3>
+                <div class="settings-grid">
+                    <div class="setting-item">
+                        <label>Market Open Time</label>
+                        <input type="time" id="marketOpen" value="{{ market_settings.market_open }}">
+                    </div>
+                    <div class="setting-item">
+                        <label>Market Close Time</label>
+                        <input type="time" id="marketClose" value="{{ market_settings.market_close }}">
+                    </div>
+                    <div class="setting-item" style="align-self:end">
+                        <button class="action-btn btn-edit" onclick="saveMarketSettings()"><i class="fas fa-save"></i> Save Settings</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Stocks Table -->
+        <div class="content-section">
+            <div class="section-header">
+                <h2><i class="fas fa-list"></i> Listed Stocks</h2>
+                <span style="color:#64748b">{{ stocks|length }} stocks</span>
+            </div>
+            
+            <!-- Search -->
+            <div class="search-bar" style="margin-bottom:1.5rem">
+                <input type="text" id="stockSearch" placeholder="Search stocks by symbol only...">
+                <button type="button" onclick="searchStocks()"><i class="fas fa-search"></i> Search</button>
+                <button type="button" onclick="refreshStocks()"><i class="fas fa-rotate-right"></i> Refresh</button>
+            </div>
+            
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Symbol</th>
+                        <th>Company Name</th>
+                        <th>Current Price</th>
+                        <th>Market Cap</th>
+                        <th>Sector</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="stocksTable">
+                    {% for stock in stocks %}
+                    <tr>
+                        <td><strong>{{ stock.symbol }}</strong></td>
+                        <td>{{ stock.name }}</td>
+                        <td>
+                            <span id="price-{{ stock.id }}">₹{{ stock.current_price }}</span>
+                            <button class="action-btn btn-edit" style="padding:0.25rem 0.5rem;margin-left:0.5rem" onclick="editPrice({{ stock.id }}, {{ stock.current_price }})"><i class="fas fa-pencil"></i></button>
+                        </td>
+                        <!-- FIXED: Market Cap Column - Removed format_currency filter -->
+                        <td>₹{{ "%.0f"|format(stock.current_price * 1000000) }}</td>
+                        <td><span class="badge badge-warning">{{ stock.sector or stock.category or 'N/A' }}</span></td>
+                        <td>
+                            <button class="action-btn btn-edit" onclick="editStock({{ stock.id }}, '{{ stock.symbol|escape }}', '{{ stock.name|escape }}', {{ stock.current_price }}, '{{ (stock.sector or '')|escape }}', '{{ (stock.category or '')|escape }}')"><i class="fas fa-edit"></i></button>
+                            <button class="action-btn btn-delete" onclick="deleteStock({{ stock.id }}, '{{ stock.symbol }}')"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" style="text-align:center;padding:2rem;color:#64748b">
+                            <i class="fas fa-inbox" style="font-size:2rem;margin-bottom:1rem;display:block"></i>
+                            No stocks listed yet
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </main>
+    
+    <!-- Add Stock Modal -->
+    <div class="modal" id="addModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-plus"></i> Add New Stock</h3>
+                <button class="modal-close" onclick="closeAddModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="addStockForm" onsubmit="addStock(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Symbol *</label>
+                        <input type="text" id="addSymbol" placeholder="e.g., AAPL" required maxlength="10">
+                    </div>
+                    <div class="form-group">
+                        <label>Company Name *</label>
+                        <input type="text" id="addName" placeholder="e.g., Apple Inc." required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Current Price (₹) *</label>
+                        <input type="number" id="addPrice" step="0.01" min="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Sector</label>
+                        <select id="addSector">
+                            <option value="">Select Sector</option>
+                            <option value="Technology">Technology</option>
+                            <option value="Healthcare">Healthcare</option>
+                            <option value="Finance">Finance</option>
+                            <option value="Energy">Energy</option>
+                            <option value="Consumer">Consumer</option>
+                            <option value="Industrial">Industrial</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <input type="text" id="addCategory" placeholder="e.g., Large Cap, Mid Cap">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" onclick="closeAddModal()">Cancel</button>
+                    <button type="submit" class="btn-confirm"><i class="fas fa-plus"></i> Add Stock</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Edit Stock Modal -->
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-edit"></i> Edit Stock</h3>
+                <button class="modal-close" onclick="closeEditModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="editStockForm" onsubmit="saveStockEdit(event)">
+                <input type="hidden" id="editStockId">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Symbol</label>
+                        <input type="text" id="editSymbol" readonly style="background:#f8fafc">
+                    </div>
+                    <div class="form-group">
+                        <label>Company Name</label>
+                        <input type="text" id="editName" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Current Price (₹)</label>
+                        <input type="number" id="editPrice" step="0.01" min="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Sector</label>
+                        <select id="editSector">
+                            <option value="">Select Sector</option>
+                            <option value="Technology">Technology</option>
+                            <option value="Healthcare">Healthcare</option>
+                            <option value="Finance">Finance</option>
+                            <option value="Energy">Energy</option>
+                            <option value="Consumer">Consumer</option>
+                            <option value="Industrial">Industrial</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <input type="text" id="editCategory">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" onclick="closeEditModal()">Cancel</button>
+                    <button type="submit" class="btn-confirm"><i class="fas fa-save"></i> Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Quick Price Edit Modal -->
+    <div class="modal" id="priceModal">
+        <div class="modal-content" style="max-width:400px">
+            <div class="modal-header">
+                <h3><i class="fas fa-pencil"></i> Update Price</h3>
+                <button class="modal-close" onclick="closePriceModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="priceForm" onsubmit="updatePrice(event)">
+                <input type="hidden" id="priceStockId">
+                <div class="form-group">
+                    <label>New Price (₹)</label>
+                    <input type="number" id="newPrice" step="0.01" min="0.01" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" onclick="closePriceModal()">Cancel</button>
+                    <button type="submit" class="btn-confirm"><i class="fas fa-save"></i> Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Upload CSV Modal -->
+    <div class="modal" id="uploadModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-file-csv"></i> Upload Stock Data (CSV)</h3>
+                <button class="modal-close" onclick="closeUploadModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div style="margin-bottom:1.5rem">
+                <p style="color:#64748b;margin-bottom:1rem">Upload a CSV file with the following columns:</p>
+                <code style="display:block;background:#f8fafc;padding:1rem;border-radius:8px;font-size:0.9rem">
+                    symbol,name,current_price,sector,category<br>
+                    AAPL,Apple Inc.,178.50,Technology,Large Cap<br>
+                    TSLA,Tesla Inc.,248.30,Energy,Large Cap
+                </code>
+                <p style="color:#64748b;margin:1rem 0;font-size:0.9rem">
+                    <i class="fas fa-info-circle"></i> Required columns: <strong>symbol, name, current_price</strong><br>
+                    Optional: sector, category
+                </p>
+            </div>
+            <form id="uploadForm" onsubmit="uploadCSV(event)">
+                <div class="form-group">
+                    <label>Select CSV File</label>
+                    <input type="file" id="csvFile" accept=".csv" required>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="updateExisting" checked> 
+                        Update existing stocks if symbol matches
+                    </label>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" onclick="closeUploadModal()">Cancel</button>
+                    <button type="submit" class="btn-confirm"><i class="fas fa-upload"></i> Upload & Import</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        // Format currency helper (JavaScript side for display)
+        function formatCurrency(num) {
+            return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(num);
+        }
+        
+        // Add Stock Modal
+        function openAddModal() { document.getElementById('addModal').classList.add('active'); }
+        function closeAddModal() { document.getElementById('addModal').classList.remove('active'); document.getElementById('addStockForm').reset(); }
+        
+        // Edit Stock Modal
+        function editStock(id, symbol, name, price, sector, category) {
+            document.getElementById('editStockId').value = id;
+            document.getElementById('editSymbol').value = symbol;
+            document.getElementById('editName').value = name;
+            document.getElementById('editPrice').value = price;
+            document.getElementById('editSector').value = sector;
+            document.getElementById('editCategory').value = category || '';
+            document.getElementById('editModal').classList.add('active');
+        }
+        function closeEditModal() { document.getElementById('editModal').classList.remove('active'); }
+        
+        // Quick Price Edit
+        function editPrice(id, currentPrice) {
+            document.getElementById('priceStockId').value = id;
+            document.getElementById('newPrice').value = currentPrice;
+            document.getElementById('priceModal').classList.add('active');
+        }
+        function closePriceModal() { document.getElementById('priceModal').classList.remove('active'); }
+        
+        // Upload CSV Modal
+        function openUploadModal() { document.getElementById('uploadModal').classList.add('active'); }
+        function closeUploadModal() { document.getElementById('uploadModal').classList.remove('active'); document.getElementById('uploadForm').reset(); }
+        
+        // Search Stocks
+        function searchStocks() {
+            const query = document.getElementById('stockSearch').value.toLowerCase().trim();
+            const rows = document.querySelectorAll('#stocksTable tr');
+            rows.forEach(row => {
+                const symbol = row.cells[0]?.textContent.toLowerCase() || '';
+                if (!query || symbol.includes(query)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        function refreshStocks() {
+            document.getElementById('stockSearch').value = '';
+            location.reload();
+        }
+        
+        // Add New Stock
+        async function addStock(e) {
+            e.preventDefault();
+            const symbol = document.getElementById('addSymbol').value.toUpperCase();
+            const name = document.getElementById('addName').value;
+            const price = parseFloat(document.getElementById('addPrice').value);
+            const sector = document.getElementById('addSector').value;
+            const category = document.getElementById('addCategory').value;
+            
+            try {
+                const res = await fetch('/admin/stocks/add', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ symbol, name, current_price: price, sector, category })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    alert('Stock added successfully!');
+                    location.reload();
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (err) {
+                alert('Error: ' + err.message);
+            }
+            closeAddModal();
+        }
+        
+        // Save Stock Edit
+        async function saveStockEdit(e) {
+            e.preventDefault();
+            const id = document.getElementById('editStockId').value;
+            const name = document.getElementById('editName').value;
+            const price = parseFloat(document.getElementById('editPrice').value);
+            const sector = document.getElementById('editSector').value;
+            const category = document.getElementById('editCategory').value;
+            
+            try {
+                const res = await fetch(`/admin/stocks/${id}/edit`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ name, current_price: price, sector, category })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    alert('Stock updated successfully!');
+                    location.reload();
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (err) {
+                alert('Error: ' + err.message);
+            }
+            closeEditModal();
+        }
+        
+        // Update Price Only
+        async function updatePrice(e) {
+            e.preventDefault();
+            const id = document.getElementById('priceStockId').value;
+            const price = parseFloat(document.getElementById('newPrice').value);
+            
+            try {
+                const res = await fetch(`/admin/stocks/${id}/price`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ current_price: price })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    alert('Price updated successfully!');
+                    location.reload();
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (err) {
+                alert('Error: ' + err.message);
+            }
+            closePriceModal();
+        }
+        
+        // Delete Stock
+        async function deleteStock(id, symbol) {
+            if (!confirm(`Delete stock "${symbol}"?\n\nThis will remove it from all user portfolios.\n\nThis action cannot be undone!`)) {
+                return;
+            }
+            
+            try {
+                const res = await fetch(`/admin/stocks/${id}/delete`, { method: 'DELETE' });
+                const data = await res.json();
+                if (res.ok) {
+                    alert('Stock deleted successfully!');
+                    location.reload();
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (err) {
+                alert('Error: ' + err.message);
+            }
+        }
+        
+        // Save Market Settings
+        async function saveMarketSettings() {
+            const open = document.getElementById('marketOpen').value;
+            const close = document.getElementById('marketClose').value;
+            try {
+                const res = await fetch('/admin/stocks/settings', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ market_open: open, market_close: close })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    alert('Market settings saved!');
+                    if (data.settings) {
+                        document.getElementById('currentMarketTime').textContent = data.settings.current_time;
+                    }
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (err) {
+                alert('Error: ' + err.message);
+            }
+        }
+        
+        // Upload CSV
+        async function uploadCSV(e) {
+            e.preventDefault();
+            const file = document.getElementById('csvFile').files[0];
+            const updateExisting = document.getElementById('updateExisting').checked;
+            
+            if (!file) {
+                alert('Please select a CSV file');
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('update_existing', updateExisting);
+            
+            try {
+                const res = await fetch('/admin/stocks/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    alert(`Import successful!\nAdded: ${data.added}\nUpdated: ${data.updated}\nErrors: ${data.errors}`);
+                    location.reload();
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (err) {
+                alert('Error: ' + err.message);
+            }
+            closeUploadModal();
+        }
+        
+        // Close modals on outside click
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                }
+            });
+        });
+        
+        function startMarketClock() {
+            const timeEl = document.getElementById('currentMarketTime');
+            if (!timeEl) return;
+
+            const updateClock = () => {
+                const formatter = new Intl.DateTimeFormat('en-GB', {
+                    timeZone: 'Asia/Kolkata',
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: false
+                });
+                timeEl.textContent = formatter.format(new Date()).replace(',', '');
+            };
+
+            updateClock();
+            setInterval(updateClock, 1000);
+        }
+        // Initialize: Format market cap on load using JavaScript
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('[id^="price-"]').forEach(el => {
+                const price = parseFloat(el.textContent.replace('₹', ''));
+                if (!isNaN(price)) {
+                    const marketCap = price * 1000000; // Simplified calculation
+                    // Format with commas using JavaScript
+                    const formatted = new Intl.NumberFormat('en-IN').format(Math.round(marketCap));
+                    el.closest('tr').querySelector('td:nth-child(4)').textContent = '₹' + formatted;
+                }
+            });
+            startMarketClock();
+        });
+    </script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
+

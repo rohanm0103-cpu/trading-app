@@ -1,0 +1,2460 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TradeWise • futuristic trading</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- AOS (Animate on Scroll) -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <style>
+    :root {
+      --gold: #f5c842;
+      --gold2: #e8a020;
+      --blue: #00c6ff;
+      --blue2: #0072ff;
+      --purple: #a855f7;
+      --dark: #050709;
+      --dark2: #0a0d14;
+      --dark3: #0f1520;
+      --glass: rgba(255, 255, 255, 0.04);
+      --glassBorder: rgba(255, 255, 255, 0.08);
+    }
+
+    html {
+      scroll-behavior: smooth;
+      overflow-x: hidden;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--dark);
+      color: #fff;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background:
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      z-index: -2;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at center, rgba(0, 198, 255, 0.1), transparent 70%);
+      z-index: -1;
+    }
+
+    /* custom scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #050709; }
+    ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #00c6ff, #a855f7); border-radius: 10px; }
+
+    /* glassmorphism base */
+    .glass {
+      background: rgba(20, 25, 35, 0.3);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 24px;
+    }
+
+    .glass-card {
+      background: rgba(30, 35, 50, 0.35);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 30px;
+      transition: all 0.4s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .glass-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, transparent, rgba(0, 198, 255, 0.2), transparent);
+      opacity: 0;
+      transition: 0.5s;
+    }
+
+    .glass-card:hover::before {
+      opacity: 1;
+    }
+
+    .glass-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 20px 50px rgba(0, 198, 255, 0.2);
+    }
+
+    /* gradients */
+    .gradient-text {
+      background: linear-gradient(135deg, #00c6ff, #0072ff, #a855f7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .neon-glow {
+      box-shadow: 0 0 20px rgba(0, 198, 255, 0.4),
+                  0 0 40px rgba(168, 85, 247, 0.2);
+    }
+
+    /* masked UI */
+    .mask-layer {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(0, 198, 255, 0.2), transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(168, 85, 247, 0.2), transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .floating {
+      transform-style: preserve-3d;
+      transition: transform 0.3s ease;
+    }
+
+    .floating:hover {
+      transform: rotateX(10deg) rotateY(-10deg) scale(1.03);
+    }
+
+    .cursor-glow,
+    .cursor-trail {
+      position: fixed;
+      left: 0;
+      top: 0;
+      pointer-events: none;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 9999;
+      mix-blend-mode: screen;
+    }
+
+    .cursor-glow {
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(0, 198, 255, 0.18), rgba(168, 85, 247, 0.08) 38%, transparent 70%);
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+
+    .cursor-trail {
+      width: 16px;
+      height: 16px;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.9), rgba(0, 198, 255, 0.58) 42%, transparent 72%);
+      box-shadow: 0 0 18px rgba(0, 198, 255, 0.45);
+      opacity: 0;
+    }
+
+    body.cursor-active .cursor-glow,
+    body.cursor-active .cursor-trail {
+      opacity: 1;
+    }
+
+    @media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
+      .cursor-glow,
+      .cursor-trail {
+        display: none;
+      }
+    }
+
+    .shine-text {
+      background: linear-gradient(120deg, #00c6ff, #ffffff, #a855f7);
+      background-size: 200%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: shine 4s linear infinite;
+    }
+
+    /* navigation */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.2rem 5%;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(10, 11, 14, 0.7);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #00c6ff, #a855f7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+      cursor: pointer;
+    }
+
+    .nav-menu {
+      display: flex;
+      gap: 2.2rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .nav-link {
+      color: #e0e0e0;
+      text-decoration: none;
+      font-weight: 500;
+      transition: 0.2s;
+      position: relative;
+      padding: 0.3rem 0;
+      cursor: pointer;
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0;
+      width: 0; height: 2px;
+      background: linear-gradient(90deg, #00c6ff, #a855f7);
+      transition: width 0.3s;
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+      color: white;
+    }
+
+    .nav-link:hover::after,
+    .nav-link.active::after {
+      width: 100%;
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid rgba(0, 198, 255, 0.4);
+      color: white;
+      padding: 0.6rem 1.6rem;
+      border-radius: 40px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-outline:hover {
+      border-color: #00c6ff;
+      box-shadow: 0 0 15px #00c6ff;
+      background: rgba(0, 198, 255, 0.1);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #00c6ff, #0072ff);
+      border: none;
+      color: white;
+      padding: 0.9rem 2.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 10px 25px rgba(0, 198, 255, 0.3);
+      border: 1px solid rgba(255,255,255,0.2);
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-primary:hover {
+      transform: scale(1.02);
+      box-shadow: 0 0 25px #00c6ff, 0 0 60px rgba(0, 198, 255, 0.3);
+    }
+
+    .btn-admin {
+      background: rgba(255, 0, 100, 0.15);
+      border: 1px solid #ff4d6d;
+      color: #ff4d6d;
+      padding: 0.6rem 1.6rem;
+      border-radius: 40px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-admin:hover {
+      background: #ff4d6d;
+      color: white;
+      box-shadow: 0 0 15px #ff4d6d;
+    }
+
+    /* hero section */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 2rem 5%;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-content {
+      flex: 1;
+      max-width: 700px;
+      z-index: 2;
+    }
+
+    .hero h1 {
+      font-size: 4.5rem;
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+      font-family: 'Space Grotesk', sans-serif;
+      position: relative;
+      display: inline-block;
+      background: linear-gradient(120deg, #00c6ff, #fff, #a855f7);
+      background-size: 200%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: shine 5s linear infinite;
+    }
+
+    .hero h1::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0;
+      left: 2px;
+      text-shadow: -2px 0 red;
+      opacity: 0.5;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      color: #b0b0c0;
+      margin-bottom: 2.5rem;
+      max-width: 550px;
+    }
+
+    .hero-description {
+      display: grid;
+      gap: 0.9rem;
+      margin-bottom: 2.2rem;
+      max-width: 620px;
+    }
+
+    .hero-description-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.8rem;
+      padding: 0.9rem 1rem;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 18px;
+      color: #d8deea;
+    }
+
+    .hero-description-item i {
+      color: #00c6ff;
+      margin-top: 0.15rem;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    /* animated chart background */
+    .chart-bg {
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: 60%;
+      height: 100%;
+      z-index: 1;
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
+    .chart-bg svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .section-chart-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      opacity: 0.26;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .section-chart-bg svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .section-shell {
+      position: relative;
+      min-height: 100vh;
+      padding: 8rem 0 4rem;
+      overflow: hidden;
+    }
+
+    .section-shell > .content-card {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* live market cards */
+    .section-title {
+      font-size: 2.8rem;
+      font-weight: 700;
+      text-align: center;
+      margin: 3rem 0 2rem;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .market-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 2rem;
+      padding: 2rem 5%;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .coin-card {
+      position: relative;
+      overflow: hidden;
+      padding: 2rem 1.5rem;
+      text-align: center;
+      transition: all 0.3s;
+      background: rgba(30, 35, 45, 0.4);
+      backdrop-filter: blur(15px);
+      border-radius: 32px;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .coin-card::before {
+      content: '';
+      position: absolute;
+      top: -50%; left: -50%;
+      width: 200%; height: 200%;
+      background: radial-gradient(circle at 50% 50%, rgba(0,198,255,0.1), transparent 70%);
+      opacity: 0;
+      transition: opacity 0.5s;
+    }
+
+    .coin-card:hover::before {
+      opacity: 1;
+    }
+
+    .coin-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, transparent, rgba(168, 85, 247, 0.2), transparent);
+      opacity: 0;
+      transition: 0.4s;
+    }
+
+    .coin-card:hover::after {
+      opacity: 1;
+    }
+
+    .coin-icon {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #00c6ff20, #0072ff20);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1rem;
+      font-size: 2rem;
+      border: 1px solid rgba(0,198,255,0.3);
+    }
+
+    .coin-price {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin: 0.8rem 0;
+    }
+
+    .coin-change {
+      display: inline-block;
+      padding: 0.3rem 1rem;
+      border-radius: 30px;
+      font-weight: 600;
+      background: rgba(0,255,0,0.1);
+      color: #00ff99;
+    }
+
+    .coin-change.negative {
+      background: rgba(255,0,100,0.1);
+      color: #ff4d6d;
+    }
+
+    .mini-chart {
+      width: 100%;
+      height: 50px;
+      margin-top: 1rem;
+    }
+
+    /* features grid */
+    .features-infographic {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 1.4rem;
+      padding: 2rem 5%;
+      max-width: 1380px;
+      margin: 0 auto;
+    }
+
+    .feature-step {
+      position: relative;
+      text-align: center;
+      padding-top: 3.8rem;
+    }
+
+    .feature-step-line {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 1px;
+      height: 3rem;
+      background: rgba(255,255,255,0.22);
+      transform: translateX(-50%);
+    }
+
+    .feature-step-clip {
+      position: absolute;
+      top: 2.55rem;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 18px;
+      height: 18px;
+      background: #2a2d33;
+      border-radius: 3px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.24);
+    }
+
+    .feature-step-clip::before,
+    .feature-step-clip::after {
+      content: "";
+      position: absolute;
+      top: 2px;
+      width: 3px;
+      height: 14px;
+      background: rgba(255,255,255,0.88);
+      border-radius: 2px;
+    }
+
+    .feature-step-clip::before { left: 5px; }
+    .feature-step-clip::after { right: 5px; }
+
+    .feature-sheet {
+      background: rgba(18, 22, 30, 0.94);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 6px;
+      padding: 1.25rem 1rem 1rem;
+      box-shadow: 0 18px 30px rgba(0,0,0,0.22);
+      min-height: 270px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .feature-step-label {
+      font-size: 0.88rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .feature-step:nth-child(1) .feature-step-label,
+    .feature-step:nth-child(3) .feature-step-label {
+      color: #ff7ca3;
+    }
+
+    .feature-step:nth-child(2) .feature-step-label,
+    .feature-step:nth-child(4) .feature-step-label {
+      color: #45d2f5;
+    }
+
+    .feature-divider {
+      width: 72%;
+      height: 1px;
+      background: rgba(255,255,255,0.14);
+      margin: 0.75rem 0 1rem;
+    }
+
+    .feature-highlight {
+      width: 88%;
+      min-height: 106px;
+      padding: 1rem 0.85rem;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      border-radius: 2px;
+      margin-bottom: 1rem;
+    }
+
+    .feature-step:nth-child(1) .feature-highlight,
+    .feature-step:nth-child(3) .feature-highlight {
+      background: linear-gradient(180deg, #ff7da9 0%, #ee578d 100%);
+    }
+
+    .feature-step:nth-child(2) .feature-highlight,
+    .feature-step:nth-child(4) .feature-highlight {
+      background: linear-gradient(180deg, #3fd4f4 0%, #249dd9 100%);
+    }
+
+    .feature-highlight h3 {
+      font-size: 1rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .feature-highlight p {
+      font-size: 0.82rem;
+      line-height: 1.42;
+      color: rgba(255,255,255,0.92);
+    }
+
+    .feature-icon {
+      margin-top: auto;
+      font-size: 1.7rem;
+      color: #ffffff;
+      opacity: 0.92;
+    }
+
+    /* how it works */
+    .steps-container {
+      display: flex;
+      justify-content: center;
+      gap: 3rem;
+      flex-wrap: wrap;
+      padding: 3rem 5%;
+    }
+
+    .step {
+      background: rgba(20, 25, 35, 0.4);
+      backdrop-filter: blur(12px);
+      border-radius: 40px;
+      padding: 2.5rem 2rem;
+      width: 280px;
+      text-align: center;
+      border: 1px solid rgba(255,255,255,0.05);
+      position: relative;
+    }
+
+    .step-number {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #00c6ff, #0072ff);
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin: 0 auto 1.5rem;
+    }
+
+    /* app section */
+    .app-section {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4rem 5%;
+      background: rgba(15, 20, 30, 0.5);
+      backdrop-filter: blur(20px);
+      border-radius: 60px;
+      margin: 4rem 5%;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .phone-mockup {
+      width: 280px;
+      height: 550px;
+      background: rgba(0,0,0,0.3);
+      border-radius: 40px;
+      border: 1px solid rgba(0,198,255,0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .app-buttons {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .store-btn {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      padding: 0.8rem 1.8rem;
+      border-radius: 40px;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .store-btn:hover {
+      background: rgba(0,198,255,0.2);
+      border-color: #00c6ff;
+    }
+
+    /* testimonials */
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      padding: 2rem 5%;
+    }
+
+    .testimonial-card {
+      padding: 2rem;
+      background: rgba(25, 30, 40, 0.4);
+      backdrop-filter: blur(12px);
+      border-radius: 32px;
+    }
+
+    .stars {
+      color: gold;
+      margin: 1rem 0;
+    }
+
+    .profile {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .profile img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      border: 2px solid #00c6ff;
+    }
+
+    /* CTA banner */
+    .cta-banner {
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      border-radius: 60px;
+      padding: 5rem 2rem;
+      text-align: center;
+      margin: 4rem 5%;
+      border: 1px solid rgba(0,198,255,0.3);
+      box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+    }
+
+    .cta-banner h2 {
+      font-size: 3.5rem;
+      font-weight: 700;
+      margin-bottom: 2rem;
+    }
+
+    /* footer */
+    footer {
+      background: rgba(5, 8, 12, 0.9);
+      backdrop-filter: blur(20px);
+      border-top: 1px solid rgba(255,255,255,0.05);
+      padding: 4rem 5% 2rem;
+      margin-top: 4rem;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 3rem;
+      margin-bottom: 3rem;
+    }
+
+    .social-icons {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .social-icons a {
+      color: #aaa;
+      transition: 0.2s;
+    }
+
+    .social-icons i {
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    .social-icons a:hover {
+      color: #00c6ff;
+    }
+
+    .footer-bottom {
+      text-align: center;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      color: #aaa;
+    }
+
+    /* page sections (for Home, Markets, Trade, Learn, Pricing, Support) */
+    .page-section {
+      display: none;
+      animation: fadeIn 0.5s ease;
+      position: relative;
+      overflow: hidden;
+      background:
+        radial-gradient(ellipse 80% 60% at 18% 24%, rgba(0, 198, 255, 0.12), transparent 60%),
+        radial-gradient(ellipse 70% 60% at 82% 28%, rgba(168, 85, 247, 0.12), transparent 62%),
+        linear-gradient(180deg, #07141d 0%, #081019 40%, #0f0d1a 100%);
+    }
+
+    .page-section.active {
+      display: block;
+    }
+
+    .page-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+      background-size: 50px 50px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .page-section::after {
+      content: '';
+      position: absolute;
+      right: -8%;
+      top: 10%;
+      width: 38%;
+      height: 76%;
+      background: radial-gradient(ellipse at center, rgba(97, 129, 255, 0.16) 0%, rgba(97, 129, 255, 0.08) 35%, transparent 72%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .page-section > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes shine {
+      0% { background-position: 0%; }
+      100% { background-position: 200%; }
+    }
+
+    /* simple content for subpages */
+    .content-card {
+      background: rgba(20, 25, 35, 0.4);
+      backdrop-filter: blur(12px);
+      border-radius: 48px;
+      padding: 3rem;
+      margin: 2rem 5%;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    #markets .content-card,
+    #learn .content-card,
+    #pricing .content-card,
+    #support .content-card {
+      position: relative;
+      z-index: 1;
+      background: rgba(10, 13, 20, 0.82);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.35);
+      overflow: hidden;
+    }
+
+    #markets .content-card::before,
+    #learn .content-card::before,
+    #pricing .content-card::before,
+    #support .content-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(0, 198, 255, 0.05), rgba(168, 85, 247, 0.04));
+      pointer-events: none;
+    }
+
+    #markets .content-card > *,
+    #learn .content-card > *,
+    #pricing .content-card > *,
+    #support .content-card > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    #markets h1,
+    #learn h1,
+    #pricing h1,
+    #support h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      letter-spacing: -0.02em;
+    }
+
+    .learn-template {
+      margin-top: 2.5rem;
+      padding: 3rem 2.5rem 2.5rem;
+      background: linear-gradient(180deg, #10161f 0%, #151e29 100%);
+      border-radius: 8px;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
+      overflow: hidden;
+    }
+
+    .learn-template-heading {
+      margin-bottom: 2.5rem;
+    }
+
+    .learn-template-heading p {
+      margin: 0;
+      color: #9aa0a8;
+      font-size: 1rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .learn-template-heading h2 {
+      margin: 0.25rem 0 0;
+      color: #e6edf7;
+      font-size: 4rem;
+      line-height: 1;
+      font-weight: 300;
+      letter-spacing: 0.04em;
+    }
+
+    .learn-template-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0;
+      align-items: end;
+      justify-items: center;
+      padding: 1rem 0 0.5rem;
+    }
+
+    .learn-panel {
+      width: 100%;
+      max-width: 190px;
+      min-height: 460px;
+      color: white;
+      position: relative;
+      padding: 1rem 1rem 1.25rem;
+      border-radius: 12px 12px 24px 24px;
+      box-shadow: 0 18px 28px rgba(0,0,0,0.18);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      transform-origin: bottom center;
+    }
+
+    .learn-panel:nth-child(1) { background: linear-gradient(180deg, #151b24 0%, #1a212c 44%, #8a3f19 84%, #6c2e10 100%); transform: perspective(600px) rotateY(-10deg); z-index: 4; }
+    .learn-panel:nth-child(2) { background: linear-gradient(180deg, #151b24 0%, #1a212c 44%, #0f5f79 82%, #0d425e 100%); transform: perspective(600px) rotateY(-4deg); z-index: 3; margin-left: -18px; }
+    .learn-panel:nth-child(3) { background: linear-gradient(180deg, #151b24 0%, #1a212c 44%, #7a3a58 82%, #5a2942 100%); transform: perspective(600px) rotateY(4deg); z-index: 2; margin-left: -18px; }
+    .learn-panel:nth-child(4) { background: linear-gradient(180deg, #151b24 0%, #1a212c 44%, #173d73 80%, #102a52 100%); transform: perspective(600px) rotateY(10deg); z-index: 1; margin-left: -18px; }
+
+    .learn-panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(45deg, rgba(255,255,255,0.08) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.08) 75%, transparent 75%, transparent),
+        linear-gradient(45deg, rgba(255,255,255,0.04) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.04) 50%, rgba(255,255,255,0.04) 75%, transparent 75%, transparent);
+      background-size: 18px 18px;
+      background-position: 0 0, 9px 9px;
+      opacity: 0.7;
+      pointer-events: none;
+    }
+
+    .learn-panel > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .learn-panel-top {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      min-height: 26px;
+    }
+
+    .learn-step-badge {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255,255,255,0.9);
+      color: #ff5d1f;
+      font-size: 0.78rem;
+      font-weight: 800;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+    }
+
+    .learn-panel:nth-child(2) .learn-step-badge { color: #00a3e8; }
+    .learn-panel:nth-child(3) .learn-step-badge { color: #0b74be; }
+    .learn-panel:nth-child(4) .learn-step-badge { color: #0d284e; }
+
+    .learn-panel-body {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      gap: 0.7rem;
+      min-height: 100%;
+    }
+
+    .learn-panel-copy {
+      background: rgba(8, 14, 24, 0.48);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 12px;
+      padding: 0.85rem 0.8rem;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.18);
+    }
+
+    .learn-panel-icon {
+      font-size: 1.7rem;
+      opacity: 0.95;
+      color: #ffffff;
+    }
+
+    .learn-panel h3 {
+      margin: 0;
+      font-size: 1.1rem;
+      line-height: 1.2;
+      font-weight: 700;
+      color: #ffffff;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.28);
+    }
+
+    .learn-panel p {
+      margin: 0;
+      font-size: 0.82rem;
+      line-height: 1.5;
+      color: rgba(255,255,255,0.98);
+    }
+
+    .learn-panel ul {
+      margin: 0;
+      padding-left: 1rem;
+      display: grid;
+      gap: 0.34rem;
+      font-size: 0.76rem;
+      line-height: 1.45;
+      color: rgba(255,255,255,0.98);
+    }
+
+    .learn-summary {
+      margin-top: 2.4rem;
+      color: #4f555d;
+    }
+
+    .learn-summary strong {
+      display: block;
+      margin-bottom: 0.45rem;
+      font-size: 1rem;
+      color: #232a33;
+    }
+
+    .learn-summary p {
+      margin: 0;
+      font-size: 0.9rem;
+      line-height: 1.55;
+      color: #7a818b;
+      max-width: 760px;
+    }
+
+    .charges-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 2rem;
+      background: rgba(25, 30, 40, 0.35);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 24px;
+      overflow: hidden;
+    }
+
+    .charges-table th,
+    .charges-table td {
+      padding: 1rem 1.2rem;
+      text-align: left;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .charges-table th {
+      background: rgba(0, 198, 255, 0.08);
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    .charges-table td {
+      color: #cfd8e6;
+    }
+
+    .info-panel {
+      margin-top: 2rem;
+      padding: 1.5rem;
+      background: rgba(25, 30, 40, 0.35);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 24px;
+    }
+
+    .info-panel h3 {
+      margin-bottom: 0.8rem;
+    }
+
+    .info-panel p {
+      color: #cfd8e6;
+      margin-bottom: 0.9rem;
+    }
+
+    .support-layout {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .support-card {
+      padding: 2rem;
+      background: rgba(25, 30, 40, 0.35);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 28px;
+    }
+
+    .support-card h3 {
+      margin-bottom: 1rem;
+    }
+
+    .support-card p {
+      color: #cfd8e6;
+      margin-bottom: 0.8rem;
+    }
+
+    .support-form {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .support-form input,
+    .support-form textarea {
+      width: 100%;
+      padding: 1rem 1.1rem;
+      background: #0f111a;
+      border: 1px solid rgba(0, 198, 255, 0.4);
+      border-radius: 20px;
+      color: white;
+      font-family: inherit;
+    }
+
+    .support-form input:focus,
+    .support-form textarea:focus,
+    input:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #00c6ff;
+      box-shadow: 0 0 10px #00c6ff;
+    }
+
+    .support-form textarea {
+      min-height: 140px;
+      resize: vertical;
+    }
+
+    .support-success {
+      display: none;
+      margin-top: 1rem;
+      padding: 0.9rem 1rem;
+      border-radius: 16px;
+      background: rgba(0, 255, 153, 0.12);
+      border: 1px solid rgba(0, 255, 153, 0.35);
+      color: #9ff6cf;
+    }
+
+    .support-success.show {
+      display: block;
+    }
+
+    .support-announcements {
+      margin-top: 1.3rem;
+      display: grid;
+      gap: 0.9rem;
+    }
+
+    .support-announcement {
+      padding: 1rem 1.1rem;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .support-announcement h4 {
+      margin-bottom: 0.35rem;
+      color: #ffffff;
+      font-size: 1rem;
+    }
+
+    .support-announcement p {
+      margin-bottom: 0.5rem;
+      color: #cfd8e6;
+      line-height: 1.55;
+    }
+
+    .support-announcement-time {
+      font-size: 0.8rem;
+      color: #8fb8d8;
+    }
+
+    .markets-intro {
+      max-width: 760px;
+      color: rgba(255, 255, 255, 0.62);
+      margin-bottom: 2rem;
+      line-height: 1.75;
+    }
+
+    .market-infographic {
+      margin-top: 2rem;
+      background: radial-gradient(circle at center, #16191f 0%, #101319 58%, #0a0b0e 100%);
+      border-radius: 22px;
+      padding: 2.5rem 1.5rem;
+      position: relative;
+      min-height: 780px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.04);
+      box-shadow: inset 0 0 80px rgba(255,255,255,0.015), 0 20px 50px rgba(0,0,0,0.25);
+    }
+
+    .market-infographic-center {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 220px;
+      min-height: 220px;
+      background: #0f1116;
+      color: #f3f6fb;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 1.4rem;
+      border: 1px solid rgba(255,255,255,0.07);
+      box-shadow: 0 18px 30px rgba(0,0,0,0.32);
+      z-index: 5;
+    }
+
+    .market-infographic-center h3 {
+      font-size: 1.7rem;
+      line-height: 1.05;
+      margin-bottom: 0.5rem;
+      font-weight: 800;
+    }
+
+    .market-infographic-center p {
+      color: #b8c2d0;
+      font-size: 0.84rem;
+      line-height: 1.45;
+    }
+
+    .market-card {
+      position: absolute;
+      width: 190px;
+      min-height: 170px;
+      padding: 1rem 1rem 1.1rem;
+      color: white;
+      border-radius: 6px;
+      box-shadow: 0 18px 25px rgba(0,0,0,0.22);
+      overflow: hidden;
+      transition: transform 0.25s ease;
+    }
+
+    .market-card:hover {
+      transform: translateY(-6px) scale(1.02);
+    }
+
+    .market-card.teal { background: linear-gradient(180deg, #17d2c2 0%, #10b7ad 100%); }
+    .market-card.green { background: linear-gradient(180deg, #68ef89 0%, #34d96a 100%); }
+    .market-card.cyan { background: linear-gradient(180deg, #2fc5ff 0%, #1396e6 100%); }
+    .market-card.blue { background: linear-gradient(180deg, #1d8fff 0%, #0a68cc 100%); }
+    .market-card.navy { background: linear-gradient(180deg, #103d7e 0%, #0a2250 100%); }
+
+    .market-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.08), transparent 55%);
+      pointer-events: none;
+    }
+
+    .market-card-icon {
+      font-size: 1.6rem;
+      margin-bottom: 0.8rem;
+      opacity: 0.92;
+    }
+
+    .market-card-symbol {
+      font-size: 1.05rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.45rem;
+      text-transform: uppercase;
+    }
+
+    .market-card-name {
+      font-size: 0.78rem;
+      line-height: 1.35;
+      color: rgba(255,255,255,0.93);
+      margin-bottom: 0.8rem;
+      min-height: 2.1em;
+    }
+
+    .market-card-price {
+      font-size: 0.92rem;
+      font-weight: 700;
+      margin-bottom: 0.35rem;
+    }
+
+    .market-card-change {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: rgba(255,255,255,0.9);
+    }
+
+    .market-loading {
+      color: #cfd8e6;
+      padding: 1.5rem 0;
+    }
+
+    .live-market-meta {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    .section-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #00c6ff;
+      margin-bottom: 1.1rem;
+    }
+
+    .section-kicker::before,
+    .section-kicker::after {
+      content: '';
+      width: 30px;
+      height: 1px;
+      background: rgba(0, 198, 255, 0.3);
+    }
+
+    .pricing-intro,
+    .support-intro,
+    .learn-intro {
+      color: rgba(255, 255, 255, 0.6);
+      line-height: 1.75;
+      max-width: 760px;
+      margin-bottom: 2rem;
+    }
+
+    /* responsiveness */
+    @media (max-width: 900px) {
+      .hero h1 { font-size: 2.8rem; }
+      .navbar { flex-direction: column; gap: 1rem; }
+      .nav-menu { flex-wrap: wrap; justify-content: center; }
+      .market-infographic {
+        min-height: auto;
+        padding: 1.5rem 1rem;
+        display: grid;
+        gap: 1rem;
+      }
+
+      .market-infographic-center,
+      .market-card {
+        position: relative;
+        left: auto !important;
+        top: auto !important;
+        right: auto !important;
+        bottom: auto !important;
+        transform: none !important;
+        width: 100%;
+        max-width: none;
+      }
+
+      .learn-template {
+        padding: 2rem 1.25rem;
+      }
+
+      .features-infographic {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+
+      .feature-step {
+        padding-top: 3rem;
+      }
+
+      .feature-step-line {
+        height: 2.3rem;
+      }
+
+      .feature-step-clip {
+        top: 1.85rem;
+      }
+
+      .learn-template-heading h2 {
+        font-size: 2.6rem;
+      }
+
+      .learn-template-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+
+      .learn-panel {
+        max-width: none;
+        min-height: 320px;
+        margin-left: 0 !important;
+        transform: none !important;
+      }
+    }
+
+    /* premium css integration */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 9999;
+      padding: 1rem 5%;
+      background: rgba(5, 7, 9, 0.3);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      transition: all 0.4s ease;
+    }
+
+    .logo {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.7rem;
+      font-weight: 800;
+      background: none;
+      color: #f4fbff;
+      -webkit-text-fill-color: #f4fbff;
+      letter-spacing: -0.5px;
+      text-shadow: 0 0 18px rgba(0, 198, 255, 0.14);
+    }
+
+    .nav-menu {
+      gap: 2rem;
+    }
+
+    .nav-link {
+      color: rgba(255, 255, 255, 0.75);
+      font-size: 0.92rem;
+      letter-spacing: 0.02em;
+    }
+
+    .btn-outline {
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 0.55rem 1.4rem;
+      font-size: 0.88rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .btn-outline:hover {
+      background: rgba(0, 198, 255, 0.15);
+      border-color: rgba(0, 198, 255, 0.5);
+      box-shadow: 0 0 20px rgba(0, 198, 255, 0.2);
+    }
+
+    .btn-primary {
+      padding: 0.55rem 1.4rem;
+      font-size: 0.88rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      box-shadow: 0 4px 20px rgba(0, 114, 255, 0.35);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(0, 198, 255, 0.45);
+    }
+
+    .btn-admin {
+      background: rgba(255, 70, 120, 0.1);
+      border: 1px solid rgba(255, 70, 120, 0.4);
+      padding: 0.55rem 1.2rem;
+      font-size: 0.85rem;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .hero {
+      min-height: 100vh;
+      justify-content: center;
+    }
+
+    .hero-content {
+      max-width: 900px;
+      text-align: center;
+      padding: 0 2rem;
+    }
+
+    .hero-description {
+      max-width: 700px;
+      margin: 0 auto 2.2rem;
+    }
+
+    .hero p {
+      color: rgba(255, 255, 255, 0.6);
+      max-width: 580px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.75;
+    }
+
+    .hero-buttons {
+      justify-content: center;
+      animation: fadeSlideUp 1s ease 0.6s both;
+    }
+
+    .hero-description-item {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(12px);
+    }
+
+    .chart-bg {
+      opacity: 0.3;
+    }
+
+    .section-title {
+      font-size: clamp(2.2rem, 4.5vw, 3.8rem);
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin: 0 0 1.5rem;
+      text-align: center;
+    }
+
+    .market-grid,
+    .features-infographic,
+    .steps-container,
+    .testimonials-grid {
+      margin-top: 3rem;
+    }
+
+    .market-grid {
+      gap: 1.5rem;
+    }
+
+    .coin-card {
+      background: rgba(15, 20, 32, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 24px;
+      backdrop-filter: blur(12px);
+    }
+
+    .features-infographic {
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .feature-sheet {
+      border-radius: 24px;
+      background: rgba(10, 13, 20, 0.8);
+      overflow: hidden;
+      transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .feature-sheet:hover {
+      transform: translateY(-8px) scale(1.02);
+      border-color: rgba(0, 198, 255, 0.25);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), 0 0 50px rgba(0, 198, 255, 0.08);
+    }
+
+    .steps-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 2rem;
+    }
+
+    .step {
+      width: auto;
+      padding: 2.5rem 1.5rem;
+      background: rgba(15, 21, 32, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 28px;
+      transition: 0.4s;
+    }
+
+    .step:hover {
+      transform: translateY(-12px);
+      border-color: rgba(0, 198, 255, 0.25);
+      box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5), 0 0 40px rgba(0, 198, 255, 0.08);
+    }
+
+    .cta-banner {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, #050a18, #07112a, #050a18);
+      border: 1px solid rgba(0, 198, 255, 0.18);
+    }
+
+    .cta-banner::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% 50%, rgba(0, 114, 255, 0.18), transparent 70%);
+      pointer-events: none;
+    }
+
+    .cta-banner > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    footer {
+      background: rgba(0, 0, 0, 0.7);
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 5rem 5% 2rem;
+    }
+
+    .footer-grid {
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 3rem;
+    }
+
+    .footer-grid h4 {
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: rgba(255, 255, 255, 0.35);
+      margin-bottom: 1.25rem;
+    }
+
+    .footer-grid p,
+    .footer-grid a {
+      color: rgba(255, 255, 255, 0.55);
+      font-size: 0.9rem;
+      line-height: 1.75;
+    }
+
+    .footer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      text-align: left;
+      color: rgba(255, 255, 255, 0.3);
+      font-size: 0.85rem;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 1024px) {
+      .footer-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .navbar {
+        padding: 0.8rem 4%;
+      }
+
+      .nav-menu {
+        justify-content: center;
+      }
+
+      .footer-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- navbar with interconnected pages -->
+  <nav class="navbar">
+    <div class="logo" onclick="switchPage('home')">TradeWise</div>
+    <div class="nav-menu">
+      <a class="nav-link active" data-page="home" onclick="switchPage('home')">Home</a>
+      <a class="nav-link" data-page="markets" onclick="switchPage('markets')">Markets</a>
+      <a class="nav-link" data-page="learn" onclick="switchPage('learn')">Learn</a>
+      <a class="nav-link" data-page="pricing" onclick="switchPage('pricing')">Pricing</a>
+      <a class="nav-link" data-page="support" onclick="switchPage('support')">Support</a>
+      <!-- Auth Links with proper redirects -->
+      <a href="{{ url_for('login_user') }}" class="btn-outline">User Login</a>
+      <a href="{{ url_for('login_admin') }}" class="btn-admin">Admin</a>
+    </div>
+  </nav>
+  <div class="cursor-glow" id="cursorGlow"></div>
+
+  <!-- HOME SECTION (active by default) -->
+  <section id="home" class="page-section active">
+    <!-- hero with animated chart bg -->
+    <section class="hero">
+      <div class="mask-layer"></div>
+      <div class="hero-content floating" data-aos="fade-right">
+        <h1 class="shine-text" data-text="TradeWise & Stocks Instantly">TradeWise & Stocks Instantly</h1>
+        <p>Advanced trading platform built for speed, clarity, and confident decision-making.</p>
+        <div class="hero-description">
+          <div class="hero-description-item">
+            <i class="fas fa-chart-line"></i>
+            <span>Track live crypto and stock movements with a clean dashboard, fast execution flow, and easy market navigation.</span>
+          </div>
+          <div class="hero-description-item">
+            <i class="fas fa-shield-alt"></i>
+            <span>Use secure account access, smart portfolio insights, and simple tools designed for both new and active traders.</span>
+          </div>
+        </div>
+        <div class="hero-buttons">
+          <a href="{{ url_for('signup_user') }}" class="btn-primary"><i class="fas fa-rocket"></i> Start Trading</a>
+          <a href="#" class="btn-outline" onclick="switchPage('markets'); return false;"><i class="fas fa-chart-line"></i> Explore Markets</a>
+        </div>
+      </div>
+      <div class="chart-bg floating">
+        <svg viewBox="0 0 800 600" preserveAspectRatio="none">
+          <path d="M0,400 Q100,200 200,350 T400,200 T600,300 T800,200 L800,600 L0,600 Z" fill="url(#grad)" opacity="0.2">
+            <animate attributeName="d" dur="10s" values="M0,400 Q100,200 200,350 T400,200 T600,300 T800,200 L800,600 L0,600 Z; M0,350 Q150,400 250,250 T400,350 T600,250 T800,300 L800,600 L0,600 Z; M0,400 Q100,200 200,350 T400,200 T600,300 T800,200 L800,600 L0,600 Z" repeatCount="indefinite"/>
+          </path>
+          <defs><linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#00c6ff"/><stop offset="100%" stop-color="#a855f7"/></linearGradient></defs>
+        </svg>
+      </div>
+    </section>
+
+    <!-- live market section -->
+    <div class="live-market-meta" data-aos="fade-up">
+      <div class="section-kicker">Live Markets</div>
+      <h2 class="section-title">🔥 Live <span class="gradient-text">Market</span></h2>
+    </div>
+    <div class="market-grid">
+      <div class="coin-card glass-card" data-aos="flip-left" data-market-slot="0">
+        <div class="coin-icon"><i class="fas fa-chart-line"></i></div>
+        <h3 class="coin-name">Loading market...</h3>
+        <div class="coin-price">₹0.00</div>
+        <div class="coin-change">+0.00%</div>
+        <svg class="mini-chart" viewBox="0 0 100 30"><polyline points="0,20 15,10 30,22 45,8 60,18 75,5 90,15 100,10" stroke="#00ff99" fill="none"/></svg>
+      </div>
+      <div class="coin-card glass-card" data-aos="flip-left" data-aos-delay="100" data-market-slot="1">
+        <div class="coin-icon"><i class="fas fa-landmark"></i></div>
+        <h3 class="coin-name">Loading market...</h3>
+        <div class="coin-price">₹0.00</div>
+        <div class="coin-change">+0.00%</div>
+        <svg class="mini-chart" viewBox="0 0 100 30"><polyline points="0,20 20,5 35,18 50,8 70,25 90,12 100,20" stroke="#00c6ff" fill="none"/></svg>
+      </div>
+      <div class="coin-card glass-card" data-aos="flip-left" data-aos-delay="200" data-market-slot="2">
+        <div class="coin-icon"><i class="fas fa-briefcase"></i></div>
+        <h3 class="coin-name">Loading market...</h3>
+        <div class="coin-price">₹0.00</div>
+        <div class="coin-change">+0.00%</div>
+        <svg class="mini-chart" viewBox="0 0 100 30"><polyline points="0,10 20,22 35,14 50,25 70,18 90,28 100,22" stroke="#00ff99" fill="none"/></svg>
+      </div>
+      <div class="coin-card glass-card" data-aos="flip-left" data-aos-delay="300" data-market-slot="3">
+        <div class="coin-icon"><i class="fas fa-building-columns"></i></div>
+        <h3 class="coin-name">Loading market...</h3>
+        <div class="coin-price">₹0.00</div>
+        <div class="coin-change">+0.00%</div>
+        <svg class="mini-chart" viewBox="0 0 100 30"><polyline points="0,15 18,25 32,10 48,20 65,10 82,20 100,15" stroke="#00c6ff" fill="none"/></svg>
+      </div>
+    </div>
+
+    <!-- features section -->
+    <h2 class="section-title" data-aos="fade-up">⚡ Powerful <span class="gradient-text">Features</span></h2>
+    <div class="features-infographic">
+      <div class="feature-step" data-aos="fade-up">
+        <div class="feature-step-line"></div>
+        <div class="feature-step-clip"></div>
+        <div class="feature-sheet">
+          <div class="feature-step-label">Step 01</div>
+          <div class="feature-divider"></div>
+          <div class="feature-highlight">
+            <h3>Fast Execution</h3>
+            <p>Orders are placed quickly so users can respond to market movement without delay.</p>
+          </div>
+          <div class="feature-icon"><i class="fas fa-bolt"></i></div>
+        </div>
+      </div>
+      <div class="feature-step" data-aos="fade-up" data-aos-delay="60">
+        <div class="feature-step-line"></div>
+        <div class="feature-step-clip"></div>
+        <div class="feature-sheet">
+          <div class="feature-step-label">Step 02</div>
+          <div class="feature-divider"></div>
+          <div class="feature-highlight">
+            <h3>Advanced Charts</h3>
+            <p>Market views, indicators, and price tracking help users read trends with more clarity.</p>
+          </div>
+          <div class="feature-icon"><i class="fas fa-chart-pie"></i></div>
+        </div>
+      </div>
+      <div class="feature-step" data-aos="fade-up" data-aos-delay="120">
+        <div class="feature-step-line"></div>
+        <div class="feature-step-clip"></div>
+        <div class="feature-sheet">
+          <div class="feature-step-label">Step 03</div>
+          <div class="feature-divider"></div>
+          <div class="feature-highlight">
+            <h3>Secure Access</h3>
+            <p>Protected account flow and safer trading controls help users manage activity with confidence.</p>
+          </div>
+          <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+        </div>
+      </div>
+      <div class="feature-step" data-aos="fade-up" data-aos-delay="180">
+        <div class="feature-step-line"></div>
+        <div class="feature-step-clip"></div>
+        <div class="feature-sheet">
+          <div class="feature-step-label">Step 04</div>
+          <div class="feature-divider"></div>
+          <div class="feature-highlight">
+            <h3>Smart Insights</h3>
+            <p>Signals, summaries, and guided tools help users make more structured trading decisions.</p>
+          </div>
+          <div class="feature-icon"><i class="fas fa-robot"></i></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- how it works -->
+    <h2 class="section-title" data-aos="fade-up">🚀 How It <span class="gradient-text">Works</span></h2>
+    <div class="steps-container">
+      <div class="step" data-aos="fade-right"><div class="step-number">1</div><h3>Create Account</h3><p>Sign up in 60 seconds</p></div>
+      <div class="step" data-aos="fade-up"><div class="step-number">2</div><h3>Deposit Funds</h3><p>Add crypto or fiat</p></div>
+      <div class="step" data-aos="fade-left"><div class="step-number">3</div><h3>Start Trading</h3><p>Execute your strategy</p></div>
+    </div>
+
+    <!-- CTA banner -->
+    <div class="cta-banner" data-aos="flip-up">
+      <h2>Start <span class="gradient-text">Trading</span> Today</h2>
+      <div style="display:flex; gap:1.5rem; justify-content:center; flex-wrap:wrap;">
+        <a href="{{ url_for('signup_user') }}" class="btn-primary"><i class="fas fa-user-plus"></i> Create Account</a>
+        <a href="#" class="btn-outline" onclick="switchPage('markets'); return false;"><i class="fas fa-globe"></i> Explore Markets</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- MARKETS SECTION -->
+  <section id="markets" class="page-section">
+    <div class="section-shell">
+      <div class="section-chart-bg">
+        <svg viewBox="0 0 1600 900" preserveAspectRatio="none">
+          <path d="M0,620 C140,540 260,700 390,600 C520,500 620,320 760,380 C920,450 980,760 1140,720 C1290,680 1390,360 1600,430 L1600,900 L0,900 Z" fill="url(#sectionGradA)" opacity="0.75">
+            <animate attributeName="d" dur="16s" values="M0,620 C140,540 260,700 390,600 C520,500 620,320 760,380 C920,450 980,760 1140,720 C1290,680 1390,360 1600,430 L1600,900 L0,900 Z; M0,650 C170,500 270,610 430,560 C590,510 690,350 830,430 C960,500 1040,710 1180,670 C1320,630 1440,390 1600,470 L1600,900 L0,900 Z; M0,620 C140,540 260,700 390,600 C520,500 620,320 760,380 C920,450 980,760 1140,720 C1290,680 1390,360 1600,430 L1600,900 L0,900 Z" repeatCount="indefinite"/>
+          </path>
+          <defs>
+            <linearGradient id="sectionGradA" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#00c6ff"/>
+              <stop offset="100%" stop-color="#a855f7"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      <div class="content-card" data-aos="fade-up">
+      <div class="section-kicker">Markets Board</div>
+      <h1 class="gradient-text" style="font-size:3rem; margin-bottom:2rem;">📊 Markets Overview</h1>
+      <p class="markets-intro">This market board follows the layered infographic style from your reference image. The stock names shown here come from the stocks you have inserted, with live values updating from your market API.</p>
+      <div id="marketInfographic" class="market-infographic">
+        <div class="market-loading">Loading market stocks...</div>
+      </div>
+    </div>
+    </div>
+  </section>
+
+  <!-- TRADE SECTION -->
+  <section id="trade" class="page-section">
+    <div class="section-shell">
+      <div class="section-chart-bg">
+        <svg viewBox="0 0 1600 900" preserveAspectRatio="none">
+          <path d="M0,660 C180,540 260,760 450,640 C610,540 700,250 890,330 C1090,420 1140,730 1290,690 C1440,650 1490,430 1600,480 L1600,900 L0,900 Z" fill="url(#sectionGradB)" opacity="0.72">
+            <animate attributeName="d" dur="18s" values="M0,660 C180,540 260,760 450,640 C610,540 700,250 890,330 C1090,420 1140,730 1290,690 C1440,650 1490,430 1600,480 L1600,900 L0,900 Z; M0,610 C160,520 300,700 470,610 C630,530 760,320 910,390 C1080,470 1160,770 1320,720 C1450,680 1510,430 1600,450 L1600,900 L0,900 Z; M0,660 C180,540 260,760 450,640 C610,540 700,250 890,330 C1090,420 1140,730 1290,690 C1440,650 1490,430 1600,480 L1600,900 L0,900 Z" repeatCount="indefinite"/>
+          </path>
+          <defs>
+            <linearGradient id="sectionGradB" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#00c6ff"/>
+              <stop offset="100%" stop-color="#a855f7"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      <div class="content-card" data-aos="fade-up">
+      <h1 class="gradient-text" style="font-size:3rem; margin-bottom:2rem;">⚡ Trade Desk</h1>
+      <p>Advanced order forms, charting, and execution. (Trading interface mockup)</p>
+      <div style="display:flex; gap:2rem; flex-wrap:wrap; margin-top:2rem;">
+        <div class="glass-card" style="padding:2rem; flex:1;"><h3>Market Buy</h3><input type="text" placeholder="Amount" style="width:100%; padding:1rem; margin:1rem 0; background:#1a1e2a; border:1px solid #00c6ff40; border-radius:20px; color:white;"></div>
+        <div class="glass-card" style="padding:2rem; flex:1;"><h3>Limit Sell</h3><input type="text" placeholder="Price" style="width:100%; padding:1rem; margin:1rem 0; background:#1a1e2a; border:1px solid #00c6ff40; border-radius:20px; color:white;"></div>
+      </div>
+    </div>
+    </div>
+  </section>
+
+  <!-- LEARN SECTION -->
+  <section id="learn" class="page-section">
+    <div class="section-shell">
+      <div class="section-chart-bg">
+        <svg viewBox="0 0 1600 900" preserveAspectRatio="none">
+          <path d="M0,640 C150,580 280,700 430,610 C590,520 710,260 860,340 C1030,430 1060,720 1230,710 C1390,700 1470,420 1600,500 L1600,900 L0,900 Z" fill="url(#sectionGradC)" opacity="0.74">
+            <animate attributeName="d" dur="17s" values="M0,640 C150,580 280,700 430,610 C590,520 710,260 860,340 C1030,430 1060,720 1230,710 C1390,700 1470,420 1600,500 L1600,900 L0,900 Z; M0,600 C170,540 300,660 470,590 C640,520 730,330 900,400 C1050,470 1130,730 1270,690 C1400,650 1490,450 1600,470 L1600,900 L0,900 Z; M0,640 C150,580 280,700 430,610 C590,520 710,260 860,340 C1030,430 1060,720 1230,710 C1390,700 1470,420 1600,500 L1600,900 L0,900 Z" repeatCount="indefinite"/>
+          </path>
+          <defs>
+            <linearGradient id="sectionGradC" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#00c6ff"/>
+              <stop offset="100%" stop-color="#a855f7"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      <div class="content-card" data-aos="fade-up">
+      <div class="section-kicker">Education Hub</div>
+      <h1 class="gradient-text" style="font-size:3rem; margin-bottom:2rem;">📚 Learn & Resources</h1>
+      <p class="learn-intro">A step-by-step learning flow that matches your reference style and also carries more useful stock trading information.</p>
+      <div class="learn-template">
+        <div class="learn-template-heading">
+          <h2>4 STEPS</h2>
+        </div>
+        <div class="learn-template-grid">
+          <article class="learn-panel">
+            <div class="learn-panel-top"><span class="learn-step-badge">01</span></div>
+            <div class="learn-panel-body">
+              <div class="learn-panel-icon"><i class="far fa-lightbulb"></i></div>
+              <div class="learn-panel-copy">
+                <h3>Understand Trading</h3>
+                <p>Trading means buying a stock and selling it later based on a planned opportunity, not random guessing.</p>
+                <ul>
+                  <li>Short-term or long-term approach</li>
+                  <li>Entry, target, and exit matter</li>
+                  <li>Always define your risk first</li>
+                </ul>
+              </div>
+            </div>
+          </article>
+          <article class="learn-panel">
+            <div class="learn-panel-top"><span class="learn-step-badge">02</span></div>
+            <div class="learn-panel-body">
+              <div class="learn-panel-icon"><i class="fas fa-link"></i></div>
+              <div class="learn-panel-copy">
+                <h3>Meet Requirements</h3>
+                <p>Before you buy stocks, set up the essentials properly so you can trade smoothly and safely.</p>
+                <ul>
+                  <li>Trading account and verification</li>
+                  <li>Linked bank funds</li>
+                  <li>Budget and capital discipline</li>
+                </ul>
+              </div>
+            </div>
+          </article>
+          <article class="learn-panel">
+            <div class="learn-panel-top"><span class="learn-step-badge">03</span></div>
+            <div class="learn-panel-body">
+              <div class="learn-panel-icon"><i class="far fa-user"></i></div>
+              <div class="learn-panel-copy">
+                <h3>Build Knowledge</h3>
+                <p>Strong decisions come from learning how the market, business data, and chart behavior actually work.</p>
+                <ul>
+                  <li>Fundamental analysis basics</li>
+                  <li>Technical analysis and candles</li>
+                  <li>Support, resistance, and volume</li>
+                </ul>
+              </div>
+            </div>
+          </article>
+          <article class="learn-panel">
+            <div class="learn-panel-top"><span class="learn-step-badge">04</span></div>
+            <div class="learn-panel-body">
+              <div class="learn-panel-icon"><i class="fas fa-arrow-trend-up"></i></div>
+              <div class="learn-panel-copy">
+                <h3>Take Action Smartly</h3>
+                <p>Choose a stock, place a planned trade, review the result, and keep improving your process with discipline.</p>
+                <ul>
+                  <li>Start small as a beginner</li>
+                  <li>Use stop-loss and position sizing</li>
+                  <li>Avoid emotional decisions</li>
+                </ul>
+              </div>
+            </div>
+          </article>
+        </div>
+        <div class="learn-summary">
+          <strong>Stock trading becomes easier to understand when you learn in steps.</strong>
+          <p>Start by understanding what trading is, prepare your account and capital, build the right knowledge, and then take small planned actions. This section is designed to give beginners a clearer path before they start buying or selling stocks.</p>
+        </div>
+      </div>
+    </div>
+    </div>
+  </section>
+
+  <!-- PRICING SECTION -->
+  <section id="pricing" class="page-section">
+    <div class="section-shell">
+      <div class="section-chart-bg">
+        <svg viewBox="0 0 1600 900" preserveAspectRatio="none">
+          <path d="M0,680 C160,560 270,720 430,650 C610,570 690,290 850,350 C1020,410 1100,700 1250,670 C1410,640 1490,420 1600,520 L1600,900 L0,900 Z" fill="url(#sectionGradD)" opacity="0.72">
+            <animate attributeName="d" dur="15s" values="M0,680 C160,560 270,720 430,650 C610,570 690,290 850,350 C1020,410 1100,700 1250,670 C1410,640 1490,420 1600,520 L1600,900 L0,900 Z; M0,620 C150,540 290,690 470,620 C620,560 750,320 900,390 C1060,470 1120,720 1280,700 C1410,680 1510,470 1600,490 L1600,900 L0,900 Z; M0,680 C160,560 270,720 430,650 C610,570 690,290 850,350 C1020,410 1100,700 1250,670 C1410,640 1490,420 1600,520 L1600,900 L0,900 Z" repeatCount="indefinite"/>
+          </path>
+          <defs>
+            <linearGradient id="sectionGradD" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#00c6ff"/>
+              <stop offset="100%" stop-color="#a855f7"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      <div class="content-card" data-aos="fade-up">
+      <div class="section-kicker">Transparent Pricing</div>
+      <h1 class="gradient-text" style="font-size:3rem; margin-bottom:1rem;">💰 Transaction Charges</h1>
+      <p class="pricing-intro">Additional exchange and regulatory charges may apply during stock transactions.</p>
+      <table class="charges-table">
+        <thead>
+          <tr>
+            <th>Charge Type</th>
+            <th>Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>STT (Securities Transaction Tax)</td>
+            <td>As per government rules</td>
+          </tr>
+          <tr>
+            <td>Exchange Transaction Charges</td>
+            <td>₹0.00325%</td>
+          </tr>
+          <tr>
+            <td>GST</td>
+            <td>18% on brokerage</td>
+          </tr>
+          <tr>
+            <td>SEBI Charges</td>
+            <td>₹10 per crore</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="info-panel">
+        <h3>Price Transparency</h3>
+        <p>TradeWise believes in transparent pricing. There are no hidden fees. Users only pay minimal brokerage charges when they execute trades.</p>
+      </div>
+      <div class="info-panel">
+        <h3>Trading Awareness</h3>
+        <p>Trading can create profit, but it also carries risk. Prices move based on news, market sentiment, business performance, and overall economic conditions.</p>
+        <p>Before placing any order, users should understand the company, check market trends, decide a stop-loss, and avoid trading only on emotion or tips from others.</p>
+        <p>Beginners should start with small amounts, learn risk management, and remember that protecting capital is as important as earning returns.</p>
+      </div>
+    </div>
+    </div>
+  </section>
+
+  <!-- SUPPORT SECTION -->
+  <section id="support" class="page-section">
+    <div class="section-shell">
+      <div class="section-chart-bg">
+        <svg viewBox="0 0 1600 900" preserveAspectRatio="none">
+          <path d="M0,650 C170,530 290,740 470,620 C620,520 730,300 900,370 C1060,430 1120,710 1280,700 C1420,690 1500,420 1600,470 L1600,900 L0,900 Z" fill="url(#sectionGradE)" opacity="0.74">
+            <animate attributeName="d" dur="19s" values="M0,650 C170,530 290,740 470,620 C620,520 730,300 900,370 C1060,430 1120,710 1280,700 C1420,690 1500,420 1600,470 L1600,900 L0,900 Z; M0,620 C150,560 280,690 450,600 C620,510 750,340 910,420 C1080,500 1160,730 1310,690 C1450,650 1520,450 1600,500 L1600,900 L0,900 Z; M0,650 C170,530 290,740 470,620 C620,520 730,300 900,370 C1060,430 1120,710 1280,700 C1420,690 1500,420 1600,470 L1600,900 L0,900 Z" repeatCount="indefinite"/>
+          </path>
+          <defs>
+            <linearGradient id="sectionGradE" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#00c6ff"/>
+              <stop offset="100%" stop-color="#a855f7"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      <div class="content-card" data-aos="fade-up">
+      <div class="section-kicker">24/5 Assistance</div>
+      <h1 class="gradient-text" style="font-size:3rem; margin-bottom:2rem;">🛟 Support Center</h1>
+      <p class="support-intro">24/5 live support for account help, feedback, trading questions, and general assistance.</p>
+      <div class="support-layout">
+        <div class="support-card">
+          <h3>Contact Information</h3>
+          <p><strong>Help Line Number:</strong> 7022288653</p>
+          <p><strong>Email:</strong> rohan.m0103@gmail.com</p>
+          <p>If you have any feedback, doubts, or support requests, send us a message using the form. Our team will review it and respond as soon as possible.</p>
+          <div id="supportAnnouncements" class="support-announcements">
+            <div class="support-announcement">
+              <h4>Latest platform updates</h4>
+              <p>Admin announcements will appear here for users and will automatically disappear after 24 hours.</p>
+            </div>
+          </div>
+        </div>
+        <div class="support-card">
+          <h3>Send Your Message</h3>
+          <form class="support-form" onsubmit="submitSupportMessage(event)">
+            <input type="text" name="name" placeholder="Your name" required>
+            <input type="email" name="email" placeholder="Your email" required>
+            <textarea name="message" placeholder="Enter your feedback or doubts here..." required></textarea>
+            <button type="submit" class="btn-primary">Send Message</button>
+          </form>
+          <div id="supportSuccess" class="support-success">Message sent successfully. Your request has been completed and recorded.</div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </section>
+
+  <!-- footer (common) -->
+  <footer>
+    <div class="footer-grid">
+      <div><h4>TradeWise</h4><p>Next-gen trading platform</p></div>
+      <div><h4>About</h4><p>Careers</p><p>Press</p></div>
+      <div><h4>Legal</h4><p>Privacy Policy</p><p>Terms of Service</p></div>
+      <div><h4>Follow us</h4><div class="social-icons"><a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a><a href="https://twitter.com/" target="_blank" rel="noopener noreferrer" aria-label="Twitter"><i class="fab fa-twitter"></i></a><a href="https://github.com/" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><i class="fab fa-github"></i></a><a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a></div></div>
+    </div>
+    <div class="footer-bottom">© 2026 TradeWise. All rights reserved.</div>
+  </footer>
+
+  <!-- scripts -->
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    AOS.init({ duration: 1000, once: true, offset: 50 });
+
+    let marketRefreshHandle = null;
+
+    function normalizeMarketStocks(stocks) {
+      const marketStocks = (stocks || [])
+        .filter(stock => stock && stock.symbol !== 'META')
+        .map(stock => ({ ...stock }));
+
+      const hasNifty50 = marketStocks.some(stock => stock.symbol === 'NIFTY50' || stock.name === 'NIFTY 50');
+
+      if (!hasNifty50) {
+        marketStocks.unshift({
+          symbol: 'NIFTY50',
+          name: 'NIFTY 50',
+          current_price: 22350.00,
+          change_percent: 0.90
+        });
+      }
+
+      marketStocks.sort((a, b) => {
+        if (a.symbol === 'NIFTY50') return -1;
+        if (b.symbol === 'NIFTY50') return 1;
+        return 0;
+      });
+
+      return marketStocks;
+    }
+
+    function updateHomeMarketCards(stocks) {
+      const cards = document.querySelectorAll('.coin-card[data-market-slot]');
+      if (!cards.length) return;
+
+      const normalized = normalizeMarketStocks(stocks).slice(0, cards.length);
+
+      cards.forEach((card, index) => {
+        const stock = normalized[index];
+        if (!stock) return;
+
+        const nameEl = card.querySelector('.coin-name');
+        const priceEl = card.querySelector('.coin-price');
+        const changeEl = card.querySelector('.coin-change');
+        const iconEl = card.querySelector('.coin-icon i');
+        const chartLine = card.querySelector('.mini-chart polyline');
+        const iconClasses = [
+          'fas fa-chart-line',
+          'fas fa-landmark',
+          'fas fa-briefcase',
+          'fas fa-building-columns'
+        ];
+
+        if (nameEl) {
+          nameEl.textContent = stock.name || stock.symbol || 'Market Asset';
+        }
+
+        if (priceEl) {
+          priceEl.textContent = `₹${Number(stock.current_price || 0).toLocaleString('en-IN', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+          })}`;
+        }
+
+        if (changeEl) {
+          const changeValue = Number(stock.change_percent || 0);
+          changeEl.textContent = `${changeValue >= 0 ? '+' : ''}${changeValue.toFixed(2)}%`;
+          changeEl.classList.toggle('negative', changeValue < 0);
+        }
+
+        if (iconEl) {
+          iconEl.className = iconClasses[index % iconClasses.length];
+        }
+
+        if (chartLine) {
+          chartLine.setAttribute('stroke', Number(stock.change_percent || 0) >= 0 ? '#00ff99' : '#ff4d6d');
+        }
+      });
+    }
+
+    function renderMarketInfographic(stocks) {
+      const board = document.getElementById('marketInfographic');
+      if (!board) return;
+
+      const palette = ['green', 'teal', 'cyan', 'teal', 'navy', 'blue', 'cyan', 'blue'];
+      const icons = [
+        'fa-chart-line',
+        'fa-building-columns',
+        'fa-coins',
+        'fa-wallet',
+        'fa-arrow-trend-up',
+        'fa-chart-pie',
+        'fa-landmark',
+        'fa-industry'
+      ];
+      const positions = [
+        'left: 13%; top: 10%; transform: rotate(-8deg);',
+        'left: 30%; top: 2%; transform: rotate(6deg);',
+        'right: 17%; top: 14%; transform: rotate(-2deg);',
+        'right: 8%; top: 31%; transform: rotate(2deg);',
+        'right: 16%; bottom: 15%; transform: rotate(-8deg);',
+        'left: 34%; bottom: 9%; transform: rotate(4deg);',
+        'left: 13%; bottom: 18%; transform: rotate(-3deg);',
+        'left: 42%; top: 37%; transform: rotate(-10deg);'
+      ];
+
+      const cards = normalizeMarketStocks(stocks).slice(0, 8).map((stock, index) => {
+        const price = Number(stock.current_price || 0).toLocaleString('en-IN', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        });
+        const change = `${Number(stock.change_percent || 0) >= 0 ? '+' : ''}${Number(stock.change_percent || 0).toFixed(2)}%`;
+
+        return `
+          <article class="market-card ${palette[index % palette.length]}" style="${positions[index] || ''}">
+            <div class="market-card-icon"><i class="fas ${icons[index % icons.length]}"></i></div>
+            <div class="market-card-symbol">${stock.symbol || 'STOCK'}</div>
+            <div class="market-card-name">${stock.name || 'Market Asset'}</div>
+            <div class="market-card-price">₹${price}</div>
+            <div class="market-card-change">${change}</div>
+          </article>
+        `;
+      }).join('');
+
+      board.innerHTML = `
+        <div class="market-infographic-center">
+          <h3>LIVE<br>MARKETS</h3>
+          <p>Real-time stock names and prices from the assets you have inserted into your trading app.</p>
+        </div>
+        ${cards}
+      `;
+    }
+
+    async function loadMarketBoard() {
+      const board = document.getElementById('marketInfographic');
+      if (!board) return;
+
+      try {
+        const response = await fetch(`/api/stocks?ts=${Date.now()}`, { cache: 'no-store' });
+        if (!response.ok) {
+          throw new Error('Failed to load stocks');
+        }
+
+        const stocks = await response.json();
+        updateHomeMarketCards(stocks);
+        renderMarketInfographic(stocks);
+      } catch (error) {
+        const fallbackStocks = [
+          { symbol: 'BTC', name: 'Bitcoin', current_price: 67420.00, change_percent: 2.34 },
+          { symbol: 'ETH', name: 'Ethereum', current_price: 3245.00, change_percent: 1.78 },
+          { symbol: 'SOL', name: 'Solana', current_price: 148.20, change_percent: -1.23 },
+          { symbol: 'BNB', name: 'Binance Coin', current_price: 578.90, change_percent: 0.56 },
+          { symbol: 'RELIANCE', name: 'Reliance Industries', current_price: 2850.50, change_percent: 1.24 },
+          { symbol: 'TCS', name: 'Tata Consultancy Services', current_price: 4125.30, change_percent: -0.52 },
+          { symbol: 'INFY', name: 'Infosys', current_price: 1785.25, change_percent: 0.84 },
+          { symbol: 'HDFCBANK', name: 'HDFC Bank', current_price: 1680.80, change_percent: 0.61 }
+        ];
+        updateHomeMarketCards(fallbackStocks);
+        renderMarketInfographic(fallbackStocks);
+      }
+    }
+
+    function startMarketRefresh() {
+      if (marketRefreshHandle) return;
+      marketRefreshHandle = setInterval(loadMarketBoard, 3000);
+    }
+
+    // Page switching function
+    function switchPage(pageId) {
+      // Hide all sections
+      document.querySelectorAll('.page-section').forEach(section => {
+        section.classList.remove('active');
+      });
+      document.querySelectorAll('.nav-link[data-page]').forEach(link => {
+        link.classList.remove('active');
+      });
+      // Show selected section
+      const activeSection = document.getElementById(pageId);
+      if (activeSection) {
+        activeSection.classList.add('active');
+      }
+      const activeLink = document.querySelector(`.nav-link[data-page="${pageId}"]`);
+      if (activeLink) {
+        activeLink.classList.add('active');
+      }
+      // Scroll to top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (pageId === 'markets') {
+        loadMarketBoard();
+        startMarketRefresh();
+      }
+    }
+
+    loadMarketBoard();
+    startMarketRefresh();
+
+    function submitSupportMessage(event) {
+      event.preventDefault();
+      const form = event.target;
+      const successBox = document.getElementById('supportSuccess');
+      if (successBox) {
+        successBox.classList.add('show');
+      }
+      form.reset();
+    }
+
+    function formatAnnouncementTime(value) {
+      if (!value) return 'Available for 24 hours';
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return 'Available for 24 hours';
+      return `Visible until ${date.toLocaleString('en-IN')}`;
+    }
+
+    async function loadSupportAnnouncements() {
+      const container = document.getElementById('supportAnnouncements');
+      if (!container) return;
+
+      try {
+        const response = await fetch(`/api/announcements/active?_=${Date.now()}`, { cache: 'no-store' });
+        if (!response.ok) throw new Error('Failed to load announcements');
+        const announcements = await response.json();
+
+        if (!announcements || announcements.length === 0) {
+          container.innerHTML = `
+            <div class="support-announcement">
+              <h4>No live announcements</h4>
+              <p>Important notices from admin will appear here and stay visible for 24 hours.</p>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = announcements.map((announcement) => `
+          <div class="support-announcement">
+            <h4>${announcement.title}</h4>
+            <p>${announcement.message}</p>
+            <div class="support-announcement-time">${formatAnnouncementTime(announcement.expires_at)}</div>
+          </div>
+        `).join('');
+      } catch (error) {
+        container.innerHTML = `
+          <div class="support-announcement">
+            <h4>Announcements unavailable</h4>
+            <p>We could not load the latest admin updates right now.</p>
+          </div>
+        `;
+      }
+    }
+
+    loadSupportAnnouncements();
+
+    const cursorGlow = document.getElementById('cursorGlow');
+    if (cursorGlow && !window.matchMedia('(hover: none), (pointer: coarse), (prefers-reduced-motion: reduce)').matches) {
+      const cursorTrails = Array.from({ length: 5 }, (_, index) => {
+        const trail = document.createElement('div');
+        trail.className = 'cursor-trail';
+        trail.setAttribute('aria-hidden', 'true');
+        trail.style.transition = `opacity 0.2s ease, transform ${0.08 + index * 0.035}s ease-out`;
+        document.body.appendChild(trail);
+        return { node: trail, x: 0, y: 0 };
+      });
+
+      let mouseX = window.innerWidth / 2;
+      let mouseY = window.innerHeight / 2;
+      let glowX = mouseX;
+      let glowY = mouseY;
+      let cursorFrame = null;
+
+      function animateCursor() {
+        glowX += (mouseX - glowX) * 0.18;
+        glowY += (mouseY - glowY) * 0.18;
+        cursorGlow.style.left = `${glowX}px`;
+        cursorGlow.style.top = `${glowY}px`;
+
+        cursorTrails.forEach((trail, index) => {
+          const target = index === 0 ? { x: mouseX, y: mouseY } : cursorTrails[index - 1];
+          trail.x += (target.x - trail.x) * (0.34 - index * 0.03);
+          trail.y += (target.y - trail.y) * (0.34 - index * 0.03);
+          trail.node.style.left = `${trail.x}px`;
+          trail.node.style.top = `${trail.y}px`;
+          trail.node.style.transform = `translate(-50%, -50%) scale(${1 - index * 0.12})`;
+        });
+
+        cursorFrame = requestAnimationFrame(animateCursor);
+      }
+
+      window.addEventListener('mousemove', (event) => {
+        mouseX = event.clientX;
+        mouseY = event.clientY;
+        document.body.classList.add('cursor-active');
+        if (!cursorFrame) {
+          animateCursor();
+        }
+      });
+
+      window.addEventListener('mouseleave', () => {
+        document.body.classList.remove('cursor-active');
+      });
+    }
+
+  </script>
+
+  <!-- ========== SIMULATED EXTERNAL HTML PAGES (for completeness, they would be separate files) ========== -->
+  <!-- 
+    The following pages should be created as separate HTML files:
+    - login_user.html (user login form → redirect to dashboard.html)
+    - login_admin.html (admin login → redirect to admin_dashboard.html)
+    - signup.html (sign up form → redirect to dashboard.html)
+    - dashboard.html (user dashboard after login)
+    - admin_dashboard.html (admin panel)
+    
+    For interconnectivity, all links point to these filenames.
+  -->
+</body>
+</html>

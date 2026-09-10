@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Login - TradeWise{% endblock %}
+{% block body_class %}user-login-page{% endblock %}
+{% block main_class %}login-main{% endblock %}
+{% block content %}
+<div class="login-grid-bg" aria-hidden="true"></div>
+<div class="login-market-lines" aria-hidden="true">
+    <svg viewBox="0 0 1200 700" preserveAspectRatio="none">
+        <defs>
+            <linearGradient id="loginLineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#00c6ff" />
+                <stop offset="100%" stop-color="#a855f7" />
+            </linearGradient>
+        </defs>
+        <path d="M0,500 C120,450 210,560 330,480 C460,390 560,230 700,280 C840,330 910,520 1040,470 C1120,440 1160,360 1200,390" />
+        <path d="M0,580 C140,530 250,610 390,545 C520,485 610,320 760,360 C910,400 960,580 1100,535 C1150,520 1180,480 1200,500" />
+    </svg>
+</div>
+
+<section class="login-experience login-experience-full">
+    <div class="auth-container user-login-card user-login-card-full">
+        <a href="{{ url_for('index') }}" class="close-page" aria-label="Close login page">
+            <span aria-hidden="true">&times;</span>
+        </a>
+
+        <a href="{{ url_for('index') }}" class="login-brand" aria-label="Go to home page">
+            <span>TradeWise</span>
+        </a>
+
+        <div class="auth-header">
+            <div class="login-icon">
+                <i class="fas fa-circle-user"></i>
+            </div>
+            <h2>User Login</h2>
+            <p>Enter your credentials to access TradeWise</p>
+        </div>
+
+        <form id="loginForm" class="auth-form">
+            <div class="form-group">
+                <label for="username"><i class="fas fa-user"></i> Username</label>
+                <input type="text" id="username" placeholder="Enter username" autocomplete="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password"><i class="fas fa-lock"></i> Password</label>
+                <input type="password" id="password" placeholder="Enter password" autocomplete="current-password" required>
+            </div>
+            <button type="submit" class="btn-primary btn-full">
+                <i class="fas fa-right-to-bracket"></i> Login
+            </button>
+        </form>
+
+        <div id="message" class="message"></div>
+
+        <div class="login-register-link">
+            <p>Don't have an account?</p>
+            <a href="{{ url_for('signup_user') }}">Create Account</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction Management - Admin</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .admin-layout{display:flex;min-height:100vh}.sidebar{width:260px;background:linear-gradient(180deg,#1e293b 0%,#0f172a 100%);color:white;padding:1.5rem 0;position:fixed;height:100vh;overflow-y:auto;z-index:100}.sidebar-header{padding:0 1.5rem 1.5rem 1.5rem;border-bottom:1px solid rgba(255,255,255,0.1);margin-bottom:1.5rem}.sidebar-brand{font-size:1.5rem;font-weight:700;color:#3b82f6;display:flex;align-items:center;gap:0.5rem}.sidebar-brand i{color:#D4AF37}.sidebar-menu{list-style:none;padding:0 1rem}.sidebar-item{margin-bottom:0.5rem}.sidebar-link{display:flex;align-items:center;gap:0.75rem;padding:0.875rem 1rem;color:#cbd5e1;text-decoration:none;border-radius:8px;transition:all 0.3s;font-weight:500}.sidebar-link span{white-space:nowrap}.sidebar-link:hover,.sidebar-link.active{background:rgba(59,130,246,0.2);color:#60a5fa}.sidebar-link.active{background:rgba(59,130,246,0.3);color:white;border-left:3px solid #3b82f6}.sidebar-link i{width:20px;text-align:center}.main-content{flex:1;margin-left:260px;padding:2rem}.top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid #e2e8f0}.top-bar h1{font-size:1.8rem;color:#1e293b;font-weight:700}.top-bar-actions{display:flex;gap:1rem;align-items:center}.search-bar{display:flex;gap:1rem;margin-bottom:0;flex-wrap:wrap;align-items:end}.filter-field{display:flex;align-items:center;gap:0.55rem}.search-bar input,.search-bar select{padding:0.8rem 1rem;border:2px solid #dbe3ef;border-radius:12px;font-size:1rem;min-width:180px;background:white;box-shadow:inset 0 1px 2px rgba(15,23,42,0.04)}.search-bar input:focus,.search-bar select:focus{outline:none;border-color:#3b82f6;box-shadow:0 0 0 4px rgba(59,130,246,0.12)}.search-bar button,.btn-reset,.btn-date-apply{padding:0.85rem 1.4rem;border:none;border-radius:12px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:0.55rem;font-weight:700;box-shadow:0 12px 24px rgba(15,23,42,0.08);transition:transform .2s ease,box-shadow .2s ease,background .2s ease;min-width:126px}.search-bar button,.btn-date-apply{background:linear-gradient(135deg,#3b82f6,#2563eb);color:white}.search-bar button:hover,.btn-date-apply:hover{transform:translateY(-1px);box-shadow:0 14px 28px rgba(37,99,235,0.22)}.btn-date-apply{min-width:52px;padding:0.85rem}.btn-reset{background:linear-gradient(135deg,#94a3b8,#64748b);color:white}.btn-reset:hover{background:linear-gradient(135deg,#64748b,#475569);transform:translateY(-1px);box-shadow:0 14px 28px rgba(71,85,105,0.22)}.content-section{background:white;border-radius:12px;padding:2rem;box-shadow:0 2px 4px rgba(0,0,0,0.05);margin-bottom:2rem}.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem}.section-header h2{font-size:1.4rem;color:#1e293b;font-weight:600}.section-header h2 i{margin-right:0.5rem;color:#3b82f6}.data-table{width:100%;border-collapse:collapse}.data-table thead{background:#f8fafc}.data-table th{padding:1rem;text-align:left;font-weight:600;color:#475569;border-bottom:2px solid #e2e8f0}.data-table td{padding:1rem;border-bottom:1px solid #e2e8f0;color:#334155;vertical-align:top}.data-table tbody tr:hover{background:#f8fafc}.user-filter-link{color:#1d4ed8;font-weight:700;text-decoration:none}.user-filter-link:hover{text-decoration:underline}.badge{padding:0.25rem 0.75rem;border-radius:20px;font-size:0.85rem;font-weight:500}.badge-success{background:#dcfce7;color:#166534}.badge-warning{background:#fef3c7;color:#92400e}.badge-danger{background:#fee2e2;color:#991b1b}.action-btn{padding:0.4rem 0.8rem;border:none;border-radius:6px;cursor:pointer;font-size:0.85rem;transition:all 0.3s;margin-right:0.5rem}.btn-view{background:#3b82f6;color:white}.btn-view:hover{background:#2563eb}.btn-approve{background:#22c55e;color:white}.btn-approve:hover{background:#16a34a}.btn-reject{background:#ef4444;color:white}.btn-reject:hover{background:#dc2626}.btn-export{background:#8b5cf6;color:white;text-decoration:none;display:inline-flex;align-items:center;gap:0.5rem}.btn-export:hover{background:#7c3aed}.table-wrap{overflow-x:auto}.modal{position:fixed;inset:0;background:rgba(15,23,42,0.6);display:none;align-items:center;justify-content:center;z-index:1000;padding:1rem}.modal.active{display:flex}.modal-content{background:white;border-radius:16px;max-width:680px;width:100%;padding:1.5rem;box-shadow:0 24px 60px rgba(15,23,42,0.25)}.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}.modal-header h3{font-size:1.2rem;color:#0f172a}.modal-close{background:none;border:none;font-size:1.5rem;color:#64748b;cursor:pointer}.modal-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;margin-top:1rem}.modal-field{background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:0.85rem 1rem}.modal-field label{display:block;font-size:0.8rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.04em;margin-bottom:0.35rem}.modal-field span{color:#0f172a;font-weight:600;word-break:break-word}.modal-full{grid-column:1/-1}.amount-strong{font-weight:700;color:#0f172a}@media(max-width:1024px){.sidebar{width:70px}.sidebar-header span,.sidebar-link span{display:none}.sidebar-brand{justify-content:center}.sidebar-link{justify-content:center;padding:1rem}.main-content{margin-left:70px}}@media(max-width:768px){.admin-layout{flex-direction:column}.sidebar{width:100%;height:auto;position:relative}.sidebar-menu{display:flex;overflow-x:auto;padding:0.5rem 0;gap:0.5rem}.sidebar-item{margin:0}.sidebar-link{padding:0.75rem;white-space:nowrap}.main-content{margin-left:0;padding:1rem}.top-bar{flex-direction:column;align-items:flex-start;gap:1rem}.modal-grid{grid-template-columns:1fr}.filter-field{width:100%}.filter-field input,.filter-field select,.filter-field button,.filter-field a{width:100%}}
+    </style>
+</head>
+<body class="admin-layout">
+    <aside class="sidebar">
+        <div class="sidebar-header"><div class="sidebar-brand"><i class="fas fa-shield-alt"></i><span>Admin</span></div></div>
+        <ul class="sidebar-menu">
+            <li class="sidebar-item"><a href="{{ url_for('admin_dashboard') }}" class="sidebar-link"><i class="fas fa-home"></i><span>Dashboard</span></a></li>
+            <li class="sidebar-item"><a href="{{ url_for('admin_users') }}" class="sidebar-link"><i class="fas fa-users"></i><span>User Management</span></a></li>
+            <li class="sidebar-item"><a href="{{ url_for('admin_stocks') }}" class="sidebar-link"><i class="fas fa-chart-line"></i><span>Stock Management</span></a></li>
+            <li class="sidebar-item"><a href="{{ url_for('admin_transactions') }}" class="sidebar-link active"><i class="fas fa-exchange-alt"></i><span>Transaction Management</span></a></li>
+            <li class="sidebar-item"><a href="{{ url_for('admin_analytics') }}" class="sidebar-link"><i class="fas fa-chart-bar"></i><span>Analytics & Reports</span></a></li>
+            <li class="sidebar-item"><a href="{{ url_for('admin_funds') }}" class="sidebar-link"><i class="fas fa-wallet"></i><span>Fund Management</span></a></li>
+            <li class="sidebar-item"><a href="{{ url_for('admin_settings') }}" class="sidebar-link"><i class="fas fa-cog"></i><span>Admin Controls</span></a></li>
+            <li class="sidebar-item" style="margin-top:2rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,0.1)"><a href="{{ url_for('logout') }}" class="sidebar-link" style="color:#f87171"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <div class="top-bar">
+            <h1><i class="fas fa-exchange-alt"></i> Transaction Management</h1>
+            <div class="top-bar-actions">
+                <a href="{{ url_for('export_transactions', symbol=filters.symbol) }}" class="action-btn btn-export"><i class="fas fa-file-export"></i> Export CSV</a>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <form class="search-bar" method="GET">
+                <div class="filter-field">
+                    <input type="text" name="symbol" id="symbolFilter" value="{{ filters.symbol or '' }}" placeholder="Filter by symbol...">
+                </div>
+                <button type="submit"><i class="fas fa-search"></i> Search</button>
+                <a href="{{ url_for('admin_transactions') }}" class="btn-reset"><i class="fas fa-rotate-right"></i> Refresh</a>
+            </form>
+        </div>
+
+        <div class="content-section">
+            <div class="section-header">
+                <h2><i class="fas fa-list"></i> Transaction Logs</h2>
+                <span style="color:#64748b">{{ transactions|length }} transactions</span>
+            </div>
+
+            <div class="table-wrap">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Date</th>
+                            <th>User</th>
+                            <th>Stock</th>
+                            <th>Type</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for t in transactions %}
+                        <tr
+                            data-transaction-id="{{ t.id }}"
+                            data-date="{{ t.transaction_date.strftime('%Y-%m-%d %H:%M') }}"
+                            data-username="{{ t.username }}"
+                            data-email="{{ t.email }}"
+                            data-symbol="{{ t.symbol }}"
+                            data-stock-name="{{ t.stock_name }}"
+                            data-type="{{ t.transaction_type }}"
+                            data-quantity="{{ t.quantity }}"
+                            data-price="&#8377;{{ '%.2f'|format(t.price_per_unit|float) }}"
+                            data-total="&#8377;{{ '%.2f'|format(t.total_amount|float) }}"
+                            data-status="{{ t.status }}"
+                        >
+                            <td>#{{ t.id }}</td>
+                            <td>{{ t.transaction_date.strftime('%Y-%m-%d %H:%M') }}</td>
+                            <td>{{ t.username }}<br><small style="color:#64748b">{{ t.email }}</small></td>
+                            <td>{{ t.symbol }}<br><small style="color:#64748b">{{ t.stock_name }}</small></td>
+                            <td><span class="badge {{ 'badge-success' if t.transaction_type == 'BUY' else 'badge-danger' }}">{{ t.transaction_type }}</span></td>
+                            <td>{{ t.quantity }}</td>
+                            <td>&#8377;{{ '%.2f'|format(t.price_per_unit|float) }}</td>
+                            <td><strong>&#8377;{{ '%.2f'|format(t.total_amount|float) }}</strong></td>
+                            <td><span class="badge {{ 'badge-success' if t.status == 'APPROVED' else 'badge-warning' if t.status == 'PENDING' else 'badge-danger' }}">{{ t.status }}</span></td>
+                            <td>
+                                {% if t.status == 'PENDING' %}
+                                <button class="action-btn btn-approve" type="button" onclick="approveTransaction({{ t.id }})"><i class="fas fa-check"></i></button>
+                                <button class="action-btn btn-reject" type="button" onclick="rejectTransaction({{ t.id }})"><i class="fas fa-times"></i></button>
+                                {% else %}
+                                <button class="action-btn btn-view" type="button" onclick="viewTransaction({{ t.id }})"><i class="fas fa-eye"></i></button>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="10" style="text-align:center;padding:2rem;color:#64748b">
+                                <i class="fas fa-inbox" style="font-size:2rem;margin-bottom:1rem;display:block"></i>
+                                No transactions found
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <div class="modal" id="transactionModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-receipt"></i> Transaction Details</h3>
+                <button class="modal-close" type="button" onclick="closeTransactionModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-grid">
+                <div class="modal-field"><label>Transaction ID</label><span id="modalTransactionId"></span></div>
+                <div class="modal-field"><label>Date & Time</label><span id="modalTransactionDate"></span></div>
+                <div class="modal-field"><label>User</label><span id="modalTransactionUser"></span></div>
+                <div class="modal-field"><label>Email</label><span id="modalTransactionEmail"></span></div>
+                <div class="modal-field"><label>Stock Symbol</label><span id="modalTransactionSymbol"></span></div>
+                <div class="modal-field"><label>Company Name</label><span id="modalTransactionStockName"></span></div>
+                <div class="modal-field"><label>Order Type</label><span id="modalTransactionType"></span></div>
+                <div class="modal-field"><label>Status</label><span id="modalTransactionStatus"></span></div>
+                <div class="modal-field"><label>Quantity</label><span id="modalTransactionQuantity"></span></div>
+                <div class="modal-field"><label>Price Per Unit</label><span id="modalTransactionPrice"></span></div>
+                <div class="modal-field modal-full"><label>Total Amount</label><span class="amount-strong" id="modalTransactionTotal"></span></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function approveTransaction(id) {
+            if (!confirm('Approve this transaction?')) return;
+            fetch(`/admin/transactions/${id}/approve`, { method: 'POST' })
+                .then(res => res.json())
+                .then(data => {
+                    alert(data.message || data.error || 'Transaction updated');
+                    location.reload();
+                })
+                .catch(err => alert('Error: ' + err.message));
+        }
+
+        function rejectTransaction(id) {
+            if (!confirm('Reject this transaction?')) return;
+            fetch(`/admin/transactions/${id}/reject`, { method: 'POST' })
+                .then(res => res.json())
+                .then(data => {
+                    alert(data.message || data.error || 'Transaction updated');
+                    location.reload();
+                })
+                .catch(err => alert('Error: ' + err.message));
+        }
+
+        function viewTransaction(id) {
+            const row = document.querySelector(`[data-transaction-id="${id}"]`);
+            if (!row) {
+                alert('Transaction details not found.');
+                return;
+            }
+
+            document.getElementById('modalTransactionId').textContent = '#' + row.dataset.transactionId;
+            document.getElementById('modalTransactionDate').textContent = row.dataset.date;
+            document.getElementById('modalTransactionUser').textContent = row.dataset.username;
+            document.getElementById('modalTransactionEmail').textContent = row.dataset.email;
+            document.getElementById('modalTransactionSymbol').textContent = row.dataset.symbol;
+            document.getElementById('modalTransactionStockName').textContent = row.dataset.stockName;
+            document.getElementById('modalTransactionType').textContent = row.dataset.type;
+            document.getElementById('modalTransactionStatus').textContent = row.dataset.status;
+            document.getElementById('modalTransactionQuantity').textContent = row.dataset.quantity;
+            document.getElementById('modalTransactionPrice').textContent = row.dataset.price;
+            document.getElementById('modalTransactionTotal').textContent = row.dataset.total;
+            document.getElementById('transactionModal').classList.add('active');
+        }
+
+        function closeTransactionModal() {
+            document.getElementById('transactionModal').classList.remove('active');
+        }
+
+        document.getElementById('transactionModal').addEventListener('click', function(event) {
+            if (event.target === this) {
+                closeTransactionModal();
+            }
+        });
+
+    </script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

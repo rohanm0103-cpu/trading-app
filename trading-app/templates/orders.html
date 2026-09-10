@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders - TradeWise</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+.dashboard-layout {
+            display: flex;
+            min-height: 100vh;
+            position: relative;
+            background: radial-gradient(circle at top left, rgba(0, 198, 255, 0.12), transparent 20%),
+                        radial-gradient(circle at bottom right, rgba(168, 85, 247, 0.12), transparent 20%),
+                        linear-gradient(180deg, #04060d 0%, #0b1220 100%);
+            color: #e2e8f0;
+            overflow-x: hidden;
+        }
+
+        body.dashboard-layout::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.02), transparent),
+                        linear-gradient(rgba(255, 255, 255, 0.02), transparent);
+            pointer-events: none;
+            z-index: -2;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: rgba(15, 23, 42, 0.86);
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 2rem 1.25rem;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            backdrop-filter: blur(14px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            padding-bottom: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .sidebar-brand {
+            font-size: 1.55rem;
+            font-weight: 800;
+            color: #a855f7;
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            margin-bottom: 1rem;
+        }
+
+        .sidebar-profile {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 18px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .sidebar-profile:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .profile-pic {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            border: 2px solid rgba(168, 85, 247, 0.35);
+            background: linear-gradient(135deg, #0ea5e9, #a855f7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.1rem;
+            overflow: hidden;
+        }
+
+        .profile-pic img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .profile-info { flex: 1; display: none; }
+        .profile-name { font-weight: 700; font-size: 0.95rem; color: #fff; }
+        .profile-email, .profile-edit { font-size: 0.82rem; color: #94a3b8; display: none; }
+
+        .sidebar-menu { list-style: none; padding: 0; margin-top: 1rem; }
+        .sidebar-item { margin-bottom: 0.5rem; }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.95rem 1rem;
+            color: #cbd5e1;
+            text-decoration: none;
+            border-radius: 14px;
+            transition: all 0.25s;
+            border: 1px solid transparent;
+        }
+
+        .sidebar-link:hover, .sidebar-link.active {
+            background: rgba(59, 130, 246, 0.18);
+            color: #fff;
+            border-color: rgba(59, 130, 246, 0.28);
+        }
+
+        .sidebar-link.active { border-left: 4px solid #7c3aed; }
+        .sidebar-link i { width: 20px; text-align: center; }
+
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2.5rem 2.5rem 3rem;
+            min-height: 100vh;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .top-bar h1 {
+            font-size: 2rem;
+            color: #fff;
+            font-weight: 800;
+        }
+
+        .top-bar-actions { display: flex; gap: 1rem; align-items: center; }
+        .top-bar-actions span { color: #cbd5e1; }
+
+        .btn-logout {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            padding: 0.65rem 1.4rem;
+            border-radius: 999px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 12px 25px rgba(220, 38, 38, 0.25);
+        }
+
+        .btn-logout:hover { transform: translateY(-1px); box-shadow: 0 18px 35px rgba(220, 38, 38, 0.35); }
+
+        .content-section {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.12);
+            margin-bottom: 2rem;
+        }
+
+        .section-title, .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .section-title h2, .section-header h2 {
+            font-size: 1.5rem;
+            color: #fff;
+            font-weight: 700;
+        }
+
+        .section-title h2 i, .section-header h2 i { margin-right: 0.5rem; color: #7c3aed; }
+        .view-all { color: #60a5fa; text-decoration: none; font-weight: 600; }
+        .view-all:hover { text-decoration: underline; }
+
+        .funds-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.5rem; }
+        .fund-card { background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 22px; padding: 1.5rem; box-shadow: 0 18px 45px rgba(0, 0, 0, 0.1); cursor: pointer; transition: transform 0.3s, box-shadow 0.3s; }
+        .fund-card:hover { transform: translateY(-4px); box-shadow: 0 28px 60px rgba(0, 0, 0, 0.18); }
+        .fund-logo { width: 52px; height: 52px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: 700; color: white; }
+        .fund-info h4 { font-size: 1.05rem; color: #fff; margin-bottom: 0.25rem; line-height: 1.3; }
+        .fund-info p { font-size: 0.9rem; color: #94a3b8; }
+        .fund-performance { display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255, 255, 255, 0.08); }
+        .fund-return { font-size: 1.25rem; font-weight: 700; color: #7dd3fc; }
+        .fund-return.down { color: #fda4af; }
+        .fund-period { font-size: 0.85rem; color: #94a3b8; }
+
+        .positions-preview-list { display: grid; gap: 1rem; }
+        .position-preview-item { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 1.1rem 1.3rem; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 18px; background: rgba(255, 255, 255, 0.04); }
+        .position-preview-main h4 { margin: 0 0 0.25rem 0; color: #fff; font-size: 1rem; }
+        .position-preview-main p { margin: 0; color: #94a3b8; font-size: 0.95rem; }
+        .position-preview-metrics strong { display: block; color: #fff; font-size: 1rem; }
+        .position-preview-empty { text-align: center; padding: 2rem; border: 1px dashed rgba(148, 163, 184, 0.3); border-radius: 18px; color: #94a3b8; background: rgba(255, 255, 255, 0.04); }
+
+        .security-footer { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.08); padding: 2rem; border-radius: 24px; }
+        .security-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem; }
+        .security-item { display: flex; align-items: flex-start; gap: 0.75rem; }
+        .security-item i { color: #34d399; font-size: 1.2rem; margin-top: 0.25rem; }
+        .security-item h4 { font-size: 0.98rem; font-weight: 700; color: #fff; margin-bottom: 0.25rem; }
+        .security-item p { font-size: 0.9rem; color: #94a3b8; line-height: 1.5; }
+        .security-badges { display: flex; flex-wrap: wrap; gap: 0.9rem; margin-bottom: 1.5rem; }
+        .security-badge { display: flex; align-items: center; gap: 0.5rem; padding: 0.65rem 1rem; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 999px; font-size: 0.88rem; color: #e2e8f0; }
+        .security-badge i { color: #34d399; }
+        .disclaimer { background: rgba(255, 255, 255, 0.05); border-left: 4px solid #f59e0b; padding: 1rem; border-radius: 16px; font-size: 0.9rem; color: #cbd5e1; line-height: 1.6; }
+        .copyright { text-align: center; padding-top: 1.5rem; margin-top: 1.5rem; border-top: 1px solid rgba(255, 255, 255, 0.08); font-size: 0.9rem; color: #94a3b8; }
+
+        @media (max-width: 1024px) {
+            .sidebar { width: 80px; padding: 1.5rem; }
+            .sidebar-header, .profile-info, .sidebar-link span { display: none; }
+            .sidebar-brand { justify-content: center; }
+            .sidebar-link { justify-content: center; padding: 1rem; }
+            .main-content { margin-left: 80px; padding: 1.5rem; }
+            .positions-table { overflow-x: auto; }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-layout { flex-direction: column; }
+            .sidebar { width: 100%; height: auto; position: relative; }
+            .sidebar-menu { display: flex; overflow-x: auto; padding: 0.5rem 0; gap: 0.75rem; }
+            .sidebar-item { margin: 0; }
+            .sidebar-link { padding: 0.85rem; white-space: nowrap; }
+            .main-content { margin-left: 0; padding: 1rem; }
+            .table-actions, .detail-grid { grid-template-columns: 1fr; }
+        }.orders-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem}.orders-filters{display:flex;gap:0.75rem}.btn-filter{padding:0.5rem 1rem;border:1px solid rgba(255,255,255,0.08);border-radius:6px;background:rgba(255,255,255,0.05);cursor:pointer;font-size:0.9rem;color:#e2e8f0}.btn-filter.active{background:#2563eb;color:white;border-color:#2563eb}.orders-table{background:rgba(255,255,255,0.06);border-radius:12px;overflow:hidden;box-shadow:0 2px 4px rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.08)}.table-actions{display:flex;gap:0.5rem;justify-content:flex-end;padding:1rem;border-bottom:1px solid rgba(255,255,255,0.08)}.btn-refresh{padding:0.5rem 1rem;border:1px solid rgba(255,255,255,0.08);border-radius:6px;background:rgba(255,255,255,0.05);cursor:pointer;color:#e2e8f0}.btn-refresh:hover{background:rgba(255,255,255,0.1)}table{width:100%;border-collapse:collapse}thead{background:rgba(255,255,255,0.03)}th{padding:1rem;text-align:left;font-weight:600;color:#94a3b8;border-bottom:2px solid rgba(255,255,255,0.08)}td{padding:1rem;border-bottom:1px solid rgba(255,255,255,0.08);color:#e2e8f0}tr:hover{background:rgba(255,255,255,0.05)}.order-type{padding:0.25rem 0.75rem;border-radius:20px;font-size:0.85rem;font-weight:500}.order-type.buy{background:rgba(74,222,128,0.2);color:#4ade80}.order-type.sell{background:rgba(248,113,113,0.2);color:#f87171}.order-status{padding:0.25rem 0.75rem;border-radius:20px;font-size:0.85rem;font-weight:500}.order-status.filled{background:rgba(74,222,128,0.2);color:#4ade80}.order-status.pending{background:rgba(251,146,60,0.2);color:#fb923c}.order-status.cancelled{background:rgba(248,113,113,0.2);color:#f87171}.stock-info{display:flex;align-items:center;gap:0.75rem}.stock-symbol{font-weight:600;color:#e2e8f0}.stock-name{color:#94a3b8;font-size:0.9rem}.empty-state{text-align:center;padding:3rem;color:#64748b}.empty-state i{font-size:3rem;margin-bottom:1rem;display:block;color:#cbd5e1}.details-modal{position:fixed;inset:0;background:rgba(15,23,42,0.7);display:none;align-items:center;justify-content:center;z-index:1000;padding:1rem}.details-modal.active{display:flex}.details-panel{background:rgba(15,23,42,0.95);border-radius:18px;max-width:760px;width:100%;box-shadow:0 24px 60px rgba(15,23,42,0.4);border:1px solid rgba(255,255,255,0.08);overflow:hidden}.details-header{display:flex;justify-content:space-between;align-items:center;padding:1.25rem 1.5rem;border-bottom:1px solid rgba(255,255,255,0.08)}.details-header h3{margin:0;color:#e2e8f0}.details-close{border:none;background:none;font-size:1.2rem;color:#94a3b8;cursor:pointer}.details-close:hover{color:#f87171}.details-body{padding:1.5rem}.details-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}.detail-card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1rem}.detail-card label{display:block;font-size:0.8rem;color:#94a3b8;margin-bottom:0.35rem}.detail-card strong{font-size:1rem;color:#e2e8f0}.detail-card.full{grid-column:1/-1}.detail-link{display:inline-flex;align-items:center;gap:0.4rem;color:#2563eb;text-decoration:none;font-weight:600;margin-top:1rem}.details-loading,.details-error{text-align:center;padding:1.5rem;color:#64748b}.details-error{color:#dc2626}@media(max-width:1024px){.sidebar{width:70px}.sidebar-header span,.profile-info,.sidebar-link span{display:none}.sidebar-brand{justify-content:center}.sidebar-link{justify-content:center;padding:1rem}.main-content{margin-left:70px}}@media(max-width:768px){.dashboard-layout{flex-direction:column}.sidebar{width:100%;height:auto;position:relative}.sidebar-menu{display:flex;overflow-x:auto;padding:0.5rem 0;gap:0.5rem}.sidebar-item{margin:0}.sidebar-link{padding:0.75rem;white-space:nowrap}.main-content{margin-left:0;padding:1rem}.orders-table{overflow-x:auto}table{min-width:800px}.orders-header{flex-direction:column;align-items:flex-start;gap:1rem}.details-grid{grid-template-columns:1fr}}
+    </style>
+</head>
+<body class="dashboard-layout">
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-brand"><i class="fas fa-chart-line"></i><span>TradeWise</span></div>
+           
+        </div>
+        <ul class="sidebar-menu">
+            <li class="sidebar-item"><a href="{{ url_for('dashboard') }}" class="sidebar-link"><i class="fas fa-home"></i><span>Dashboard</span></a></li>
+            <li class="sidebar-item"><a href="{{ url_for('explore') }}" class="sidebar-link"><i class="fas fa-compass"></i><span>Explore</span></a></li>
+            <li class="sidebar-item"><a href="{{ url_for('holdings') }}" class="sidebar-link"><i class="fas fa-briefcase"></i><span>Holdings</span></a></li>
+            <li class="sidebar-item"><a href="{{ url_for('positions') }}" class="sidebar-link"><i class="fas fa-chart-area"></i><span>Positions</span></a></li>
+            <li class="sidebar-item"><a href="{{ url_for('orders') }}" class="sidebar-link active"><i class="fas fa-list"></i><span>Orders</span></a></li>
+            <li class="sidebar-item"><a href="{{ url_for('watchlist_my') }}" class="sidebar-link"><i class="fas fa-star"></i><span>My Watchlist</span></a></li>
+            <li class="sidebar-item"><a href="{{ url_for('watchlist_all') }}" class="sidebar-link"><i class="fas fa-list-ul"></i><span>All Watchlists</span></a></li>
+            <li class="sidebar-item" style="margin-top:2rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,0.1)"><a href="{{ url_for('profile_edit') }}" class="sidebar-link"><i class="fas fa-user-cog"></i><span>Settings</span></a></li>
+            <li class="sidebar-item"><a href="{{ url_for('logout') }}" class="sidebar-link" style="color:#f87171"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a></li>
+        </ul>
+    </aside>
+    <main class="main-content">
+        <div class="top-bar"><h1><i class="fas fa-list"></i> Order History</h1></div>
+        <div class="orders-header">
+            <div class="orders-filters">
+                <button class="btn-filter active" onclick="filterOrders('all', this)">All</button>
+                <button class="btn-filter" onclick="filterOrders('buy', this)">Buy</button>
+                <button class="btn-filter" onclick="filterOrders('sell', this)">Sell</button>
+                <button class="btn-filter" onclick="filterOrders('filled', this)">Filled</button>
+                <button class="btn-filter" onclick="filterOrders('pending', this)">Pending</button>
+            </div>
+            <button class="btn-refresh" onclick="fetchOrders()"><i class="fas fa-sync-alt"></i> Refresh</button>
+        </div>
+        <div class="orders-table">
+            <table>
+                <thead><tr><th>Date</th><th>Stock</th><th>Type</th><th>Quantity</th><th>Price</th><th>Total</th><th>Status</th><th>Actions</th></tr></thead>
+                <tbody id="ordersTable">
+                    <tr>
+                        <td colspan="8" class="empty-state">
+                            <i class="fas fa-receipt"></i>
+                            <p>No orders yet</p>
+                            <p style="font-size:0.9rem;margin-top:0.5rem">Your order history will appear here</p>
+                            <a href="{{ url_for('explore') }}" id="exploreLink" style="color:#2563eb;text-decoration:none;font-weight:500;margin-top:1rem;display:inline-block">Place Your First Order →</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+    <div class="details-modal" id="orderDetailsModal">
+        <div class="details-panel">
+            <div class="details-header">
+                <h3 id="orderDetailsTitle">Order Details</h3>
+                <button class="details-close" onclick="closeOrderDetails()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="details-body" id="orderDetailsBody">
+                <div class="details-loading">Loading stock details...</div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Get explore URL from DOM (avoids Jinja2 in JS string)
+        const exploreUrl = document.getElementById('exploreLink')?.href || '/explore';
+        
+        let allOrders = [];
+        let activeFilter = 'all';
+        let selectedOrderId = null;
+        let detailsRefreshTimer = null;
+
+        function formatRupees(amount) {
+            return '₹' + Number(amount || 0).toLocaleString('en-IN', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+
+        function getOrderLiveChange(order, stock) {
+            const executedPrice = Number(order.price_per_unit || 0);
+            const currentPrice = Number(stock.current_price || 0);
+
+            if (!executedPrice || !currentPrice) {
+                return {
+                    amount: 0,
+                    percent: 0,
+                    label: 'No change'
+                };
+            }
+
+            const marketAmount = currentPrice - executedPrice;
+            const marketPercent = (marketAmount / executedPrice) * 100;
+            const isSellOrder = String(order.transaction_type || '').toUpperCase() === 'SELL';
+            const liveAmount = isSellOrder ? -marketAmount : marketAmount;
+            const livePercent = isSellOrder ? -marketPercent : marketPercent;
+
+            return {
+                amount: liveAmount,
+                percent: livePercent,
+                label: liveAmount >= 0 ? 'Profit' : 'Loss'
+            };
+        }
+
+        function renderOrderDetails(order, stock) {
+            const liveChange = getOrderLiveChange(order, stock);
+            const liveChangeText = `${liveChange.amount >= 0 ? '+' : ''}${formatRupees(liveChange.amount)} (${liveChange.percent >= 0 ? '+' : ''}${liveChange.percent.toFixed(2)}%)`;
+
+            document.getElementById('orderDetailsTitle').textContent = `${order.symbol} Order #${order.id}`;
+            document.getElementById('orderDetailsBody').innerHTML = `
+                <div class="details-grid">
+                    <div class="detail-card">
+                        <label>Stock</label>
+                        <strong>${stock.symbol} - ${stock.name}</strong>
+                    </div>
+                    <div class="detail-card">
+                        <label>Order Type</label>
+                        <strong>${order.transaction_type}</strong>
+                    </div>
+                    <div class="detail-card">
+                        <label>Approved Quantity</label>
+                        <strong>${order.quantity}</strong>
+                    </div>
+                    <div class="detail-card">
+                        <label>Executed Price</label>
+                        <strong>${formatRupees(order.price_per_unit)}</strong>
+                    </div>
+                    <div class="detail-card">
+                        <label>Total Amount</label>
+                        <strong>${formatRupees(order.total_amount)}</strong>
+                    </div>
+                    <div class="detail-card">
+                        <label>Status</label>
+                        <strong>${order.status || 'FILLED'}</strong>
+                    </div>
+                    <div class="detail-card">
+                        <label>Current Price</label>
+                        <strong>${formatRupees(stock.current_price)}</strong>
+                    </div>
+                    <div class="detail-card">
+                        <label>Live Change (${liveChange.label})</label>
+                        <strong style="color:${liveChange.amount >= 0 ? '#16a34a' : '#dc2626'}">${liveChangeText}</strong>
+                    </div>
+                    <div class="detail-card">
+                        <label>Today Range</label>
+                        <strong>${formatRupees(stock.today_low)} - ${formatRupees(stock.today_high)}</strong>
+                    </div>
+                    <div class="detail-card">
+                        <label>52 Week Range</label>
+                        <strong>${formatRupees(stock.week_52_low)} - ${formatRupees(stock.week_52_high)}</strong>
+                    </div>
+                    <div class="detail-card full">
+                        <label>Last Refreshed</label>
+                        <strong>${new Date().toLocaleString('en-IN')}</strong>
+                        <a class="detail-link" href="/stock/${encodeURIComponent(order.symbol)}"><i class="fas fa-chart-line"></i> Open full stock page</a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function startDetailsRefresh() {
+            stopDetailsRefresh();
+            detailsRefreshTimer = setInterval(() => {
+                if (selectedOrderId) {
+                    refreshOrderDetails(true);
+                }
+            }, 5000);
+        }
+
+        function stopDetailsRefresh() {
+            if (detailsRefreshTimer) {
+                clearInterval(detailsRefreshTimer);
+                detailsRefreshTimer = null;
+            }
+        }
+
+        function renderFilteredOrders() {
+            if (activeFilter === 'buy' || activeFilter === 'sell') {
+                renderOrders(allOrders.filter(o => String(o.transaction_type || '').toLowerCase() === activeFilter));
+                return;
+            }
+
+            if (activeFilter === 'filled' || activeFilter === 'pending') {
+                renderOrders(allOrders.filter(o => String(o.status || 'filled').toLowerCase() === activeFilter));
+                return;
+            }
+
+            renderOrders(allOrders);
+
+            if (selectedOrderId) {
+                const existingOrder = allOrders.find(order => Number(order.id) === Number(selectedOrderId));
+                if (!existingOrder) {
+                    closeOrderDetails();
+                }
+            }
+        }
+        
+        async function fetchOrders(){
+            try{
+                const res = await fetch('/api/orders');
+                if(!res.ok) throw new Error('Failed');
+                const data = await res.json();
+                allOrders = Array.isArray(data) ? data.map(order => ({
+                    ...order,
+                    quantity: Number(order.quantity || 0),
+                    price_per_unit: Number(order.price_per_unit || 0),
+                    total_amount: Number(order.total_amount || 0),
+                    status: (order.status || 'FILLED').toUpperCase()
+                })) : [];
+                renderFilteredOrders();
+            } catch(e){
+                console.error('Error:', e);
+                renderOrders([]);
+            }
+        }
+        
+        function renderOrders(orders){
+            const tbody = document.getElementById('ordersTable');
+            
+            if(!orders || orders.length === 0){
+                tbody.innerHTML = `<tr><td colspan="8" class="empty-state"><i class="fas fa-receipt"></i><p>No orders yet</p><p style="font-size:0.9rem;margin-top:0.5rem">Your order history will appear here</p><a href="${exploreUrl}" style="color:#2563eb;text-decoration:none;font-weight:500;margin-top:1rem;display:inline-block">Place Your First Order →</a></td></tr>`;
+                return;
+            }
+            
+            tbody.innerHTML = orders.map(o => {
+                const typeClass = o.transaction_type === 'BUY' ? 'buy' : 'sell';
+                const statusValue = String(o.status || 'FILLED').toLowerCase();
+                const statusClass = statusValue === 'filled' ? 'filled' : statusValue === 'pending' ? 'pending' : 'cancelled';
+                const timestamp = new Date(o.transaction_date);
+                const date = timestamp.toLocaleDateString('en-IN');
+                const time = timestamp.toLocaleTimeString('en-IN');
+                
+                return `<tr>
+                    <td>${date}<br><small style="color:#94a3b8">${time}</small></td>
+                    <td><div class="stock-info"><div><div class="stock-symbol">${o.symbol}</div><div class="stock-name">${o.name || ''}</div></div></div></td>
+                    <td><span class="order-type ${typeClass}">${o.transaction_type}</span></td>
+                    <td>${o.quantity}</td>
+                    <td>${formatRupees(o.price_per_unit)}</td>
+                    <td>${formatRupees(o.total_amount)}</td>
+                    <td><span class="order-status ${statusClass}">${o.status || 'FILLED'}</span></td>
+                    <td><button class="btn-filter" style="padding:0.3rem 0.6rem;font-size:0.8rem" onclick="viewOrderDetails(${o.id})">View</button></td>
+                </tr>`;
+            }).join('');
+        }
+        
+        function filterOrders(type, button){
+            activeFilter = type;
+            document.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active'));
+            if (button) button.classList.add('active');
+            renderFilteredOrders();
+        }
+        
+        async function refreshOrderDetails(silent = false) {
+            const order = allOrders.find(item => Number(item.id) === Number(selectedOrderId));
+            if (!order) {
+                closeOrderDetails();
+                return;
+            }
+
+            if (!silent) {
+                document.getElementById('orderDetailsBody').innerHTML = '<div class="details-loading">Loading stock details...</div>';
+            }
+
+            try {
+                const res = await fetch(`/api/stock/${encodeURIComponent(order.symbol)}`);
+                if (!res.ok) throw new Error('Failed to load stock details');
+                const stock = await res.json();
+                renderOrderDetails(order, stock);
+            } catch (error) {
+                console.error(error);
+                if (!silent) {
+                    document.getElementById('orderDetailsBody').innerHTML = '<div class="details-error">Unable to load stock details right now.</div>';
+                }
+            }
+        }
+
+        async function viewOrderDetails(orderId){
+            const order = allOrders.find(item => Number(item.id) === Number(orderId));
+            if (!order) return;
+
+            selectedOrderId = order.id;
+            sessionStorage.setItem('selectedOrderId', String(order.id));
+            document.getElementById('orderDetailsModal').classList.add('active');
+            refreshOrderDetails(false);
+            startDetailsRefresh();
+        }
+
+        function closeOrderDetails(){
+            selectedOrderId = null;
+            sessionStorage.removeItem('selectedOrderId');
+            document.getElementById('orderDetailsModal').classList.remove('active');
+            stopDetailsRefresh();
+        }
+        
+        document.addEventListener('DOMContentLoaded', async () => {
+            const savedOrderId = sessionStorage.getItem('selectedOrderId');
+            await fetchOrders();
+            setInterval(fetchOrders, 10000);
+            if (savedOrderId) {
+                selectedOrderId = Number(savedOrderId);
+                document.getElementById('orderDetailsModal').classList.add('active');
+                refreshOrderDetails(false);
+                startDetailsRefresh();
+            }
+        });
+
+        document.getElementById('orderDetailsModal').addEventListener('click', (event) => {
+            if (event.target.id === 'orderDetailsModal') {
+                closeOrderDetails();
+            }
+        });
+    </script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

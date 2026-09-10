@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="pageTitle">{{ symbol }} - TradeWise</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
+    
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a0a;color:#e0e0e0;min-height:100vh}.stock-header{background:#1a1a1a;padding:1rem 1.5rem;border-bottom:1px solid #2a2a2a;position:sticky;top:0;z-index:100}.header-top{display:flex;align-items:center;margin-bottom:1rem}.back-btn{background:none;border:none;color:#e0e0e0;font-size:1.5rem;cursor:pointer}.company-info{display:flex;align-items:center;gap:1rem;margin-bottom:1rem}.company-logo{width:48px;height:48px;background:linear-gradient(135deg,#667eea,#764ba2);border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:700;color:white;font-size:1.2rem}.company-details h1{font-size:1.3rem;margin-bottom:0.25rem}.company-details p{color:#888;font-size:0.9rem}.price-section{margin-top:1rem}.current-price{font-size:2rem;font-weight:700;margin-bottom:0.5rem}.price-change{display:flex;align-items:center;gap:0.5rem;font-size:0.95rem}.price-change.negative{color:#ef4444}.price-change.positive{color:#10b981}.tabs{display:flex;gap:2rem;border-bottom:1px solid #2a2a2a;padding:0 1.5rem;margin-top:1rem;overflow-x:auto}.tab{padding:1rem 0;border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap;color:#888;transition:all 0.3s}.tab.active{color:#fff;border-bottom-color:#10b981}.tab-content{padding:1.5rem;display:none}.tab-content.active{display:block}.section{margin-bottom:2rem}.section-title{font-size:1.2rem;font-weight:600;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;cursor:pointer}.section-title i{color:#10b981}.section-content{overflow:hidden}.metrics-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin-bottom:1.5rem}.metric-item{background:#1a1a1a;padding:1rem;border-radius:8px}.metric-label{color:#888;font-size:0.85rem;margin-bottom:0.25rem}.metric-value{font-size:1.1rem;font-weight:600}.metric-row{display:flex;justify-content:space-between;align-items:center;padding:0.75rem 0;border-bottom:1px solid #2a2a2a}.metric-row:last-child{border-bottom:none}.chart-container{background:#1a1a1a;border-radius:12px;padding:1rem;margin-bottom:1rem;height:420px;min-height:420px}.live-chart{width:100%;height:100%}.time-filters{display:flex;gap:0.5rem;overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none}.time-filters::-webkit-scrollbar{display:none}.time-filter{padding:0.5rem 1rem;border:1px solid #2a2a2a;background:#1a1a1a;color:#888;border-radius:20px;cursor:pointer;white-space:nowrap;transition:all 0.3s;flex:0 0 auto}.time-filter.active{background:#10b981;color:#0a0a0a;border-color:#10b981}.fundamentals-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}.fundamental-item{background:#1a1a1a;padding:1rem;border-radius:8px}.fundamental-label{color:#888;font-size:0.85rem;margin-bottom:0.25rem}.fundamental-value{font-size:1rem;font-weight:600}.financials-tabs{display:flex;gap:0.5rem;margin-bottom:1rem}.financial-tab{padding:0.5rem 1rem;border:1px solid #2a2a2a;background:#1a1a1a;color:#888;border-radius:20px;cursor:pointer}.financial-tab.active{background:#10b981;color:#0a0a0a;border-color:#10b981}.bar-chart{height:250px;margin-top:1rem}.action-buttons{position:fixed;bottom:0;left:0;right:0;background:#1a1a1a;padding:1rem 1.5rem;border-top:1px solid #2a2a2a;display:flex;gap:1rem}.btn-sip{padding:1rem 1.5rem;background:#2a2a2a;color:#e0e0e0;border:none;border-radius:8px;font-weight:600;cursor:pointer}.btn-sell{flex:1;padding:1rem;background:#ef4444;color:white;border:none;border-radius:8px;font-weight:600;font-size:1rem;cursor:pointer}.btn-buy{flex:1;padding:1rem;background:#10b981;color:white;border:none;border-radius:8px;font-weight:600;font-size:1rem;cursor:pointer}
+
+/* Technical Analysis Styles */
+.tech-summary{background:#1a1a1a;border-radius:12px;padding:1.5rem;margin-bottom:1.5rem}.tech-summary h3{font-size:1rem;color:#888;margin-bottom:1rem}.tech-signal{font-size:1.5rem;font-weight:700;margin-bottom:1rem}.tech-signal.bearish{color:#ef4444}.tech-signal.neutral{color:#6b7280}.tech-signal.bullish{color:#10b981}.tech-gauge{display:flex;gap:2px;margin-bottom:1rem;height:40px}.gauge-bar{flex:1;border-radius:2px;transition:all 0.3s}.gauge-bar.bearish{background:#ef4444}.gauge-bar.neutral{background:#6b7280}.gauge-bar.bullish{background:#10b981}.tech-counts{display:flex;justify-content:space-between;margin-top:1rem}.tech-count{display:flex;align-items:center;gap:0.5rem}.tech-count.bearish{color:#ef4444}.tech-count.neutral{color:#6b7280}.tech-count.bullish{color:#10b981}.indicators-table{background:#1a1a1a;border-radius:12px;overflow:hidden}.indicator-row{display:grid;grid-template-columns:2fr 1fr 1fr;padding:1rem;border-bottom:1px solid #2a2a2a}.indicator-row.header{background:#1a1a1a;font-weight:600;color:#888;font-size:0.85rem}.indicator-row:last-child{border-bottom:none}.indicator-name{color:#e0e0e0}.indicator-value{color:#e0e0e0;text-align:center}.indicator-verdict{text-align:center}.verdict-bearish{color:#ef4444}.verdict-neutral{color:#6b7280}.verdict-bullish{color:#10b981}.support-resistance{background:#1a1a1a;border-radius:12px;padding:1.5rem}.sr-level{display:flex;justify-content:space-between;padding:0.75rem 0;border-bottom:1px solid #2a2a2a}.sr-level:last-child{border-bottom:none}.sr-label{color:#888}.sr-value{color:#e0e0e0;font-weight:600}.pivot-point{text-align:center;padding:0.5rem;background:#2a2a2a;border-radius:8px;margin:1rem 0}.pivot-label{color:#888;font-size:0.85rem}.pivot-value{color:#e0e0e0;font-weight:700;font-size:1.1rem}.moving-averages{background:#1a1a1a;border-radius:12px;overflow:hidden}.ma-row{display:grid;grid-template-columns:1fr 1fr 1fr;padding:1rem;border-bottom:1px solid #2a2a2a}.ma-row.header{background:#1a1a1a;font-weight:600;color:#888;font-size:0.85rem}.ma-row:last-child{border-bottom:none}.ma-period{color:#e0e0e0}.ma-value{text-align:center}.ma-value.below{color:#ef4444}.ma-value.above{color:#10b981}.delivery-volume{background:#1a1a1a;border-radius:12px;padding:1.5rem}.volume-tabs{display:flex;gap:0.5rem;margin-bottom:1rem}.volume-tab{padding:0.5rem 1rem;border:1px solid #2a2a2a;background:#1a1a1a;color:#888;border-radius:20px;cursor:pointer}.volume-tab.active{background:#10b981;color:#0a0a0a;border-color:#10b981}.volume-stats{margin-bottom:1rem}.volume-stat{display:flex;justify-content:space-between;padding:0.75rem 0;border-bottom:1px solid #2a2a2a}.volume-stat:last-child{border-bottom:none}.volume-label{color:#888;display:flex;align-items:center;gap:0.5rem}.volume-label::before{content:'';width:8px;height:8px;border-radius:50%;display:inline-block}.volume-label.total::before{background:#8b5cf6}.volume-label.delivery::before{background:#06b6d4}.volume-value{color:#e0e0e0;font-weight:600}.delivery-percentage{font-size:1.5rem;font-weight:700;color:#e0e0e0;margin:1rem 0}.volume-chart{height:150px;margin-top:1rem}
+
+/* News Styles */
+.news-list{display:flex;flex-direction:column;gap:1rem}.news-item{background:#1a1a1a;border-radius:12px;padding:1.5rem;transition:all 0.3s}.news-item:hover{background:#2a2a2a}.news-header{display:flex;justify-content:space-between;align-items:start;margin-bottom:0.75rem}.news-source{background:#10b981;color:#0a0a0a;padding:0.25rem 0.75rem;border-radius:20px;font-size:0.75rem;font-weight:600}.news-date{color:#888;font-size:0.85rem}.news-title{font-size:1.1rem;font-weight:600;color:#e0e0e0;margin-bottom:0.5rem;line-height:1.4}.news-summary{color:#888;font-size:0.9rem;line-height:1.5}
+
+@media(max-width:768px){.metrics-grid,.fundamentals-grid{grid-template-columns:1fr}.chart-container{height:250px}.indicator-row,.ma-row{grid-template-columns:1fr;font-size:0.85rem}}
+
+        .chart-controls{display:grid;gap:0.7rem;margin-top:0.75rem}
+        .chart-control-row{display:flex;align-items:center;gap:0.75rem;overflow:hidden}
+        .chart-control-label{font-size:0.72rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#94a3b8;min-width:68px;flex:0 0 auto}
+        .chart-tool-row{display:flex;gap:0.5rem;overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none}
+        .chart-tool-row::-webkit-scrollbar{display:none}
+        .time-filter.tool-btn{border-radius:10px}
+        .drawing-hint{font-size:0.8rem;color:#94a3b8;display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}.drawing-active-tool{display:inline-flex;align-items:center;gap:.4rem;padding:.25rem .6rem;border-radius:999px;background:#0f172a;border:1px solid #334155;color:#38bdf8;font-size:.75rem;font-weight:700}.drawing-metrics{display:none;grid-template-columns:repeat(3,minmax(0,1fr));gap:.75rem;margin-top:.8rem;background:#101826;border:1px solid #243042;border-radius:12px;padding:.9rem}.drawing-metrics.active{display:grid}.drawing-metric{background:#0b1220;border:1px solid #1e293b;border-radius:10px;padding:.7rem .8rem}.drawing-metric label{display:block;font-size:.72rem;color:#94a3b8;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.25rem}.drawing-metric strong{font-size:.95rem;color:#e2e8f0}.drawing-metric.pnl-positive strong{color:#10b981}.drawing-metric.pnl-negative strong{color:#ef4444}
+        #candlestickChart{position:relative}
+        .drawing-overlay{position:absolute;inset:0;width:100%;height:100%;z-index:5;pointer-events:auto}
+        .drawing-overlay.is-passive{pointer-events:none}
+    </style>
+</head>
+<body>
+    <!-- Header - CLEAN: Only Back Arrow -->
+    <div class="stock-header">
+        <div class="header-top">
+            <button class="back-btn" onclick="history.back()"><i class="fas fa-arrow-left"></i></button>
+        </div>
+        
+        <div class="company-info">
+            <div class="company-logo" id="companyLogo">{{ symbol[0] }}</div>
+            <div class="company-details">
+                <h1 id="companyName">{{ symbol }}</h1>
+                <p id="companyFullName">Loading...</p>
+            </div>
+        </div>
+        
+        <div class="price-section">
+            <div class="current-price" id="currentPrice">₹0.00</div>
+            <div class="price-change" id="priceChange">
+                <span id="changeAmount">0.00</span>
+                <span id="changePercent">(0.00%)</span>
+                <span>1D</span>
+            </div>
+        </div>
+        
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('overview')">Overview</div>
+            <div class="tab" onclick="switchTab('technicals')">Technicals</div>
+            <div class="tab" onclick="switchTab('news')">News</div>
+        </div>
+    </div>
+    
+    <!-- Overview Tab Content -->
+    <div class="tab-content active" id="overviewTab">
+        <!-- Chart Section -->
+        <div class="section">
+            <div class="chart-container">
+                <div id="candlestickChart" class="live-chart"></div>
+            </div>
+            <div class="chart-controls">
+                <div class="chart-control-row">
+                    <div class="chart-control-label">Time</div>
+                    <div class="time-filters">
+                        <button class="time-filter active" onclick="changeTimeframe('1m')">1 Min</button>
+                        <button class="time-filter" onclick="changeTimeframe('2m')">2 Min</button>
+                        <button class="time-filter" onclick="changeTimeframe('3m')">3 Min</button>
+                        <button class="time-filter" onclick="changeTimeframe('5m')">5 Min</button>
+                        <button class="time-filter" onclick="changeTimeframe('10m')">10 Min</button>
+                        <button class="time-filter" onclick="changeTimeframe('15m')">15 Min</button>
+                        <button class="time-filter" onclick="changeTimeframe('1D')">1 Day</button>
+                        <button class="time-filter" onclick="changeTimeframe('1W')">1 Week</button>
+                        <button class="time-filter" onclick="changeTimeframe('1M')">1 Month</button>
+                        <button class="time-filter" onclick="changeTimeframe('3M')">3 Month</button>
+                        <button class="time-filter" onclick="changeTimeframe('6M')">6 Month</button>
+                        <button class="time-filter" onclick="changeTimeframe('1Y')">1 Year</button>
+                        <button class="time-filter" onclick="changeTimeframe('5Y')">5 Year</button>
+                        <button class="time-filter" onclick="changeTimeframe('All')">All</button>
+                    </div>
+                </div>
+                <div class="chart-control-row">
+                    <div class="chart-control-label">Tools</div>
+                    <div class="chart-tool-row">
+                        <button class="time-filter tool-btn active" data-tool="none" onclick="setDrawingTool('none', this)">Pointer</button>
+                        <button class="time-filter tool-btn" data-tool="horizontal" onclick="setDrawingTool('horizontal', this)">Horizontal Line</button>
+                        <button class="time-filter tool-btn" data-tool="trend" onclick="setDrawingTool('trend', this)">Trend Line</button>
+                        <button class="time-filter tool-btn" data-tool="rectangle" onclick="setDrawingTool('rectangle', this)">Rectangle</button>
+                        <button class="time-filter tool-btn" data-tool="fib" onclick="setDrawingTool('fib', this)">Fib Retracement</button>
+                        <button class="time-filter tool-btn" onclick="clearDrawings()">Clear</button>
+                    </div>
+                </div>
+                <div class="drawing-hint"><span id="drawingHintText">Select a drawing tool to annotate the chart.</span> <span class="drawing-active-tool" id="drawingActiveTool">Pointer</span></div>
+                <div class="drawing-metrics" id="drawingMetrics">
+                    <div class="drawing-metric"><label>Start</label><strong id="drawingStartInfo">-</strong></div>
+                    <div class="drawing-metric"><label>End</label><strong id="drawingEndInfo">-</strong></div>
+                    <div class="drawing-metric" id="drawingPnlCard"><label>Profit / Loss</label><strong id="drawingPnlInfo">-</strong></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Performance Section -->
+        <div class="section">
+            <div class="section-title">
+                <span><i class="fas fa-chart-line"></i> Performance</span>
+            </div>
+            
+            <div class="metrics-grid">
+                <div class="metric-item">
+                    <div class="metric-label">Today's Low</div>
+                    <div class="metric-value" id="todayLow">₹0.00</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-label">Today's High</div>
+                    <div class="metric-value" id="todayHigh">₹0.00</div>
+                </div>
+            </div>
+            
+            <div class="metric-row">
+                <div>
+                    <div class="metric-label">52 Week Low</div>
+                    <div class="metric-value" id="week52Low">₹0.00</div>
+                </div>
+                <div style="text-align:right">
+                    <div class="metric-label">52 Week High</div>
+                    <div class="metric-value" id="week52High">₹0.00</div>
+                </div>
+            </div>
+            
+            <div class="metrics-grid" style="margin-top:1rem">
+                <div class="metric-item">
+                    <div class="metric-label">Open</div>
+                    <div class="metric-value" id="openPrice">₹0.00</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-label">Prev. Close</div>
+                    <div class="metric-value" id="prevClose">₹0.00</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-label">Volume</div>
+                    <div class="metric-value" id="volume">0</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-label">Lower circuit</div>
+                    <div class="metric-value" id="lowerCircuit">₹0.00</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-label">Upper circuit</div>
+                    <div class="metric-value" id="upperCircuit">₹0.00</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Fundamentals Section -->
+        <div class="section">
+            <div class="section-title">
+                <span><i class="fas fa-info-circle"></i> Fundamentals</span>
+            </div>
+            
+            <div class="fundamentals-grid">
+                <div class="fundamental-item">
+                    <div class="fundamental-label">Mkt Cap</div>
+                    <div class="fundamental-value" id="marketCap">₹0Cr</div>
+                </div>
+                <div class="fundamental-item">
+                    <div class="fundamental-label">ROE</div>
+                    <div class="fundamental-value" id="roe">0%</div>
+                </div>
+                <div class="fundamental-item">
+                    <div class="fundamental-label">P/E Ratio(TTM)</div>
+                    <div class="fundamental-value" id="peRatio">0</div>
+                </div>
+                <div class="fundamental-item">
+                    <div class="fundamental-label">EPS(TTM)</div>
+                    <div class="fundamental-value" id="eps">0</div>
+                </div>
+                <div class="fundamental-item">
+                    <div class="fundamental-label">P/B Ratio</div>
+                    <div class="fundamental-value" id="pbRatio">0</div>
+                </div>
+                <div class="fundamental-item">
+                    <div class="fundamental-label">Div Yield</div>
+                    <div class="fundamental-value" id="divYield">0%</div>
+                </div>
+                <div class="fundamental-item">
+                    <div class="fundamental-label">Industry P/E</div>
+                    <div class="fundamental-value" id="industryPE">0</div>
+                </div>
+                <div class="fundamental-item">
+                    <div class="fundamental-label">Book Value</div>
+                    <div class="fundamental-value" id="bookValue">₹0</div>
+                </div>
+                <div class="fundamental-item">
+                    <div class="fundamental-label">Debt to Equity</div>
+                    <div class="fundamental-value" id="debtToEquity">0</div>
+                </div>
+                <div class="fundamental-item">
+                    <div class="fundamental-label">Face Value</div>
+                    <div class="fundamental-value" id="faceValue">₹0</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Financials Section -->
+        <div class="section">
+            <div class="section-title">
+                <span><i class="fas fa-chart-bar"></i> Financials</span>
+            </div>
+            <p style="color:#888;font-size:0.85rem;margin-bottom:1rem">All values are in Cr</p>
+            
+            <div class="financials-tabs">
+                <button class="financial-tab active" onclick="switchFinancialTab('revenue')">Revenue</button>
+                <button class="financial-tab" onclick="switchFinancialTab('profit')">Profit</button>
+                <button class="financial-tab" onclick="switchFinancialTab('networth')">Net worth</button>
+            </div>
+            
+            <div class="bar-chart">
+                <canvas id="financialChart"></canvas>
+            </div>
+            
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:1rem">
+                <select style="background:#1a1a1a;color:#e0e0e0;border:1px solid #2a2a2a;padding:0.5rem 1rem;border-radius:20px">
+                    <option>Quarterly</option>
+                    <option>Yearly</option>
+                </select>
+                <button style="background:none;border:none;color:#10b981;cursor:pointer">See details <i class="fas fa-chevron-right"></i></button>
+            </div>
+        </div>
+        
+        <!-- About Company -->
+        <div class="section">
+            <div class="section-title">
+                <span><i class="fas fa-building"></i> About company</span>
+            </div>
+            <p style="color:#888;line-height:1.6" id="companyDescription">
+                Loading company information...
+            </p>
+        </div>
+    </div>
+    
+    <!-- Technicals Tab Content -->
+    <div class="tab-content" id="technicalsTab">
+        <!-- Technical Summary -->
+        <div class="section">
+            <div class="tech-summary">
+                <h3>Based on technicals, this stock is</h3>
+                <div class="tech-signal bearish" id="techSignal">Bearish</div>
+                <div class="tech-gauge" id="techGauge"></div>
+                <div class="tech-counts">
+                    <div class="tech-count bearish">
+                        <span style="width:8px;height:20px;background:#ef4444;display:inline-block;border-radius:2px"></span>
+                        <span>Bearish <strong id="bearishCount">10</strong></span>
+                    </div>
+                    <div class="tech-count neutral">
+                        <span style="width:8px;height:20px;background:#6b7280;display:inline-block;border-radius:2px"></span>
+                        <span>Neutral <strong id="neutralCount">2</strong></span>
+                    </div>
+                    <div class="tech-count bullish">
+                        <span style="width:8px;height:20px;background:#10b981;display:inline-block;border-radius:2px"></span>
+                        <span>Bullish <strong id="bullishCount">1</strong></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Indicators -->
+        <div class="section">
+            <div class="section-title" onclick="toggleSection('indicatorsSection')">
+                <span><i class="fas fa-chart-line"></i> Indicators</span>
+                <i class="fas fa-chevron-up" id="indicatorsIcon"></i>
+            </div>
+            <div class="section-content" id="indicatorsSection">
+                <div class="indicators-table">
+                    <div class="indicator-row header">
+                        <div>INDICATOR</div>
+                        <div>VALUE</div>
+                        <div>VERDICT</div>
+                    </div>
+                    <div class="indicator-row">
+                        <div class="indicator-name">RSI (14)</div>
+                        <div class="indicator-value" id="rsiValue">+46.60</div>
+                        <div class="indicator-verdict verdict-neutral" id="rsiVerdict">Neutral</div>
+                    </div>
+                    <div class="indicator-row">
+                        <div class="indicator-name">MACD (12,26,9)</div>
+                        <div class="indicator-value" id="macdValue">+0.08</div>
+                        <div class="indicator-verdict verdict-bullish" id="macdVerdict">Bullish</div>
+                    </div>
+                    <div class="indicator-row">
+                        <div class="indicator-name">Beta</div>
+                        <div class="indicator-value" id="betaValue">+1.17</div>
+                        <div class="indicator-verdict">Volatile like mkt</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Support and Resistance -->
+        <div class="section">
+            <div class="section-title" onclick="toggleSection('srSection')">
+                <span><i class="fas fa-arrows-alt-v"></i> Support and Resistance</span>
+                <i class="fas fa-chevron-up" id="srIcon"></i>
+            </div>
+            <div class="section-content" id="srSection">
+                <div class="support-resistance">
+                    <div class="sr-level">
+                        <span class="sr-label">R3</span>
+                        <span class="sr-value" id="r3Level">33.26</span>
+                    </div>
+                    <div class="sr-level">
+                        <span class="sr-label">R2</span>
+                        <span class="sr-value" id="r2Level">32.88</span>
+                    </div>
+                    <div class="sr-level">
+                        <span class="sr-label">R1</span>
+                        <span class="sr-value" id="r1Level">32.28</span>
+                    </div>
+                    <div class="pivot-point">
+                        <div class="pivot-label">PIVOT</div>
+                        <div class="pivot-value" id="pivotLevel">31.90</div>
+                    </div>
+                    <div class="sr-level">
+                        <span class="sr-label">S1</span>
+                        <span class="sr-value" id="s1Level">31.30</span>
+                    </div>
+                    <div class="sr-level">
+                        <span class="sr-label">S2</span>
+                        <span class="sr-value" id="s2Level">30.92</span>
+                    </div>
+                    <div class="sr-level">
+                        <span class="sr-label">S3</span>
+                        <span class="sr-value" id="s3Level">30.32</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Moving Averages -->
+        <div class="section">
+            <div class="section-title" onclick="toggleSection('maSection')">
+                <span><i class="fas fa-chart-line"></i> Moving averages</span>
+                <i class="fas fa-chevron-up" id="maIcon"></i>
+            </div>
+            <div class="section-content" id="maSection">
+                <div class="moving-averages">
+                    <div class="ma-row header">
+                        <div>PERIOD</div>
+                        <div>MA</div>
+                        <div>EMA</div>
+                    </div>
+                    <div class="ma-row">
+                        <div class="ma-period">10D</div>
+                        <div class="ma-value below" id="ma10">31.76</div>
+                        <div class="ma-value below" id="ema10">31.57</div>
+                    </div>
+                    <div class="ma-row">
+                        <div class="ma-period">20D</div>
+                        <div class="ma-value below" id="ma20">31.54</div>
+                        <div class="ma-value below" id="ema20">31.58</div>
+                    </div>
+                    <div class="ma-row">
+                        <div class="ma-period">50D</div>
+                        <div class="ma-value below" id="ma50">32.67</div>
+                        <div class="ma-value below" id="ema50">32.36</div>
+                    </div>
+                    <div class="ma-row">
+                        <div class="ma-period">100D</div>
+                        <div class="ma-value below" id="ma100">33.87</div>
+                        <div class="ma-value below" id="ema100">33.02</div>
+                    </div>
+                    <div class="ma-row">
+                        <div class="ma-period">200D</div>
+                        <div class="ma-value below" id="ma200">32.66</div>
+                        <div class="ma-value below" id="ema200">33.13</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Delivery Volume -->
+        <div class="section">
+            <div class="section-title" onclick="toggleSection('dvSection')">
+                <span><i class="fas fa-chart-bar"></i> Delivery volume percentage</span>
+                <i class="fas fa-chevron-up" id="dvIcon"></i>
+            </div>
+            <div class="section-content" id="dvSection">
+                <div class="delivery-volume">
+                    <div class="volume-tabs">
+                        <button class="volume-tab active" onclick="switchVolumeTab('daily')">Daily</button>
+                        <button class="volume-tab" onclick="switchVolumeTab('weekly')">Weekly</button>
+                        <button class="volume-tab" onclick="switchVolumeTab('monthly')">Monthly</button>
+                    </div>
+                    <div class="volume-stats">
+                        <div style="color:#888;font-size:0.85rem;margin-bottom:1rem">LAST 5 DAYS</div>
+                        <div class="volume-stat">
+                            <span class="volume-label total">Total traded volume</span>
+                            <span class="volume-value" id="totalVolume">1,24,81,177</span>
+                        </div>
+                        <div class="volume-stat">
+                            <span class="volume-label delivery">Delivery volume</span>
+                            <span class="volume-value" id="deliveryVolume">62,22,794</span>
+                        </div>
+                        <div class="delivery-percentage" id="deliveryPercentage">49.86%</div>
+                    </div>
+                    <div class="volume-chart">
+                        <canvas id="volumeChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- News Tab Content -->
+    <div class="tab-content" id="newsTab">
+        <div class="section">
+            <div class="news-list" id="newsList"></div>
+        </div>
+    </div>
+    
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+        <button class="btn-sip">SIP</button>
+        <button class="btn-sell" onclick="sellStock()">Sell</button>
+        <button class="btn-buy" onclick="buyStock()">Buy</button>
+    </div>
+    
+    <script>
+        let stockData = null;
+        let priceChart = null;
+        let financialChart = null;
+        let volumeChart = null;
+        let currentSymbol = '{{ symbol }}';
+        let currentTimeframe = '1m';
+        let liveRefreshTimer = null;
+        let candleChart = null;
+        let candleSeries = null;
+        let lightweightChartsLoader = null;
+        let drawingTool = 'none';
+        let drawings = [];
+        let drawingStartPoint = null;
+        let drawingPreview = null;
+        let latestCandles = [];
+        
+        // Sample news data
+        const newsData = [
+            { source: 'Economic Times', date: '2 hours ago', title: 'Company reports strong Q4 earnings, beats analyst expectations', summary: 'The company announced quarterly results that exceeded market expectations with revenue growth of 15% year-over-year.' },
+            { source: 'Moneycontrol', date: '5 hours ago', title: 'Analysts upgrade stock rating to Buy from Hold', summary: 'Leading brokerage firms have upgraded the stock citing strong fundamentals and growth prospects in the sector.' },
+            { source: 'Bloomberg Quint', date: '1 day ago', title: 'New product launch expected to drive growth in FY25', summary: 'The company is set to launch innovative products that could capture significant market share in the coming fiscal year.' },
+            { source: 'CNBC TV18', date: '2 days ago', title: 'Management announces expansion plans in international markets', summary: 'Company executives revealed plans to expand operations in Southeast Asia and Europe over the next 18 months.' },
+            { source: 'Reuters', date: '3 days ago', title: 'Strategic partnership announced with global tech giant', summary: 'The collaboration is expected to enhance technological capabilities and open new revenue streams.' },
+            { source: 'Financial Express', date: '5 days ago', title: 'Dividend announcement: Board recommends Rs 5 per share', summary: 'The board has recommended a dividend of Rs 5 per share for the financial year, maintaining its shareholder-friendly policy.' },
+            { source: 'Business Standard', date: '1 week ago', title: 'Industry outlook positive, company well-positioned for growth', summary: 'Sector analysts remain optimistic about industry growth with the company being a key beneficiary of market trends.' }
+        ];
+        
+        function getCandleTimeframe(timeframe) {
+            if (['1m', '2m', '3m', '5m', '10m', '15m', '1D', '1W', '1M'].includes(timeframe)) return timeframe;
+            if (timeframe === '3M' || timeframe === '6M') return '1W';
+            return '1M';
+        }
+
+        function getCandleLimit(timeframe) {
+            const limitMap = { '1m': 90, '2m': 90, '3m': 90, '5m': 90, '10m': 90, '15m': 90, '1D': 80, '1W': 80, '1M': 60, '3M': 72, '6M': 90, '1Y': 52, '5Y': 60, 'All': 80 };
+            return limitMap[timeframe] || 80;
+        }
+
+        async function fetchLiveQuote() {
+            const res = await fetch('/api/stocks');
+            if (!res.ok) throw new Error('Failed to fetch live quote');
+
+            const stocks = await res.json();
+            const liveStock = stocks.find(stock => stock.symbol === currentSymbol);
+            if (!liveStock) throw new Error('Live quote not found');
+
+            const currentPrice = liveStock.currency === 'USD'
+                ? parseFloat(liveStock.current_price) * 83
+                : parseFloat(liveStock.current_price);
+            const changePercent = parseFloat(liveStock.change_percent) || 0;
+
+            return {
+                current_price: currentPrice,
+                change_percent: changePercent,
+                change_amount: roundToTwo(currentPrice * changePercent / 100)
+            };
+        }
+
+        async function fetchCandles(timeframe = currentTimeframe) {
+            const res = await fetch(`/api/stock/${currentSymbol}/candles?timeframe=${getCandleTimeframe(timeframe)}&limit=${getCandleLimit(timeframe)}`);
+            if (!res.ok) throw new Error('Failed to fetch candles');
+
+            const data = await res.json();
+            await renderCandlestickChart(data.candles || []);
+        }
+
+        async function fetchStockDetails(timeframe = '1D') {
+            try {
+                const [res, liveQuote] = await Promise.all([
+                    fetch(`/api/stock/${currentSymbol}?timeframe=${timeframe}`),
+                    fetchLiveQuote(),
+                    fetchCandles(timeframe)
+                ]);
+                if (!res.ok) throw new Error('Failed to fetch');
+                stockData = await res.json();
+                stockData.current_price = liveQuote.current_price;
+                stockData.change_percent = liveQuote.change_percent;
+                stockData.change_amount = liveQuote.change_amount;
+                stockData.today_low = roundToTwo(stockData.current_price * 0.97);
+                stockData.today_high = roundToTwo(stockData.current_price * 1.03);
+                stockData.open = roundToTwo(stockData.current_price * 0.99);
+                stockData.prev_close = roundToTwo(stockData.current_price * 1.01);
+                stockData.lower_circuit = roundToTwo(stockData.current_price * 0.95);
+                stockData.upper_circuit = roundToTwo(stockData.current_price * 1.05);
+                stockData.week_52_low = roundToTwo(stockData.current_price * 0.7);
+                stockData.week_52_high = roundToTwo(stockData.current_price * 1.4);
+                updateUI();
+                updateTechnicalIndicators();
+                loadNews();
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('companyFullName').textContent = 'Error loading data';
+                document.getElementById('currentPrice').textContent = '₹0.00';
+                alert('Failed to load stock details: ' + error.message);
+            }
+        }
+
+        function roundToTwo(value) {
+            return Math.round(parseFloat(value) * 100) / 100;
+        }
+
+        function formatRupees(amount) {
+            const value = Number(amount || 0);
+            return '₹' + value.toLocaleString('en-IN', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+
+        function getLightweightCharts() {
+            return window.LightweightCharts || null;
+        }
+
+        function ensureLightweightCharts() {
+            if (getLightweightCharts()) {
+                return Promise.resolve(getLightweightCharts());
+            }
+
+            if (lightweightChartsLoader) {
+                return lightweightChartsLoader;
+            }
+
+            const sources = [
+                'https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js',
+                'https://cdn.jsdelivr.net/npm/lightweight-charts/dist/lightweight-charts.standalone.production.js'
+            ];
+
+            lightweightChartsLoader = new Promise((resolve, reject) => {
+                const loadFrom = (index) => {
+                    if (getLightweightCharts()) {
+                        resolve(getLightweightCharts());
+                        return;
+                    }
+
+                    if (index >= sources.length) {
+                        reject(new Error('Chart library failed to load'));
+                        return;
+                    }
+
+                    const script = document.createElement('script');
+                    script.src = sources[index];
+                    script.async = true;
+                    script.onload = () => {
+                        if (getLightweightCharts()) {
+                            resolve(getLightweightCharts());
+                        } else {
+                            loadFrom(index + 1);
+                        }
+                    };
+                    script.onerror = () => loadFrom(index + 1);
+                    document.head.appendChild(script);
+                };
+
+                loadFrom(0);
+            }).catch((error) => {
+                lightweightChartsLoader = null;
+                throw error;
+            });
+
+            return lightweightChartsLoader;
+        }
+
+        function createCandlestickSeries(chart, options) {
+            const chartsLib = getLightweightCharts();
+            if (!chart) return null;
+            if (typeof chart.addCandlestickSeries === 'function') {
+                return chart.addCandlestickSeries(options);
+            }
+            if (chartsLib && typeof chart.addSeries === 'function' && chartsLib.CandlestickSeries) {
+                return chart.addSeries(chartsLib.CandlestickSeries, options);
+            }
+            return null;
+        }
+
+        function getDrawingHint() {
+            if (drawingTool === 'horizontal') return 'Click once on the chart to place a horizontal line.';
+            if (drawingTool === 'trend') return 'Click and drag to draw a trend line.';
+            if (drawingTool === 'rectangle') return 'Click and drag to draw a rectangle.';
+            if (drawingTool === 'fib') return 'Click and drag to place a fib retracement.';
+            return 'Select a drawing tool to annotate the chart.';
+        }
+
+        function updateDrawingHint() {
+            const hintText = document.getElementById('drawingHintText');
+            if (hintText) hintText.textContent = getDrawingHint();
+            const activeTool = document.getElementById('drawingActiveTool');
+            const toolLabels = {
+                none: 'Pointer',
+                horizontal: 'Horizontal Line',
+                trend: 'Trend Line',
+                rectangle: 'Rectangle',
+                fib: 'Fib Retracement'
+            };
+            if (activeTool) activeTool.textContent = toolLabels[drawingTool] || 'Pointer';
+        }
+
+        function formatChartDate(timestampSeconds) {
+            if (!timestampSeconds) return '-';
+            const date = new Date(timestampSeconds * 1000);
+            return date.toLocaleString('en-IN', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function getPriceBounds() {
+            if (!latestCandles.length) return { min: 0, max: 1 };
+            let min = latestCandles[0].low;
+            let max = latestCandles[0].high;
+            latestCandles.forEach(candle => {
+                min = Math.min(min, candle.low);
+                max = Math.max(max, candle.high);
+            });
+            return { min, max };
+        }
+
+        function xToCandle(indexX) {
+            const container = document.getElementById('candlestickChart');
+            if (!container || !latestCandles.length) return null;
+            const width = Math.max(1, container.clientWidth);
+            const ratio = Math.max(0, Math.min(1, indexX / width));
+            const idx = Math.min(latestCandles.length - 1, Math.max(0, Math.round(ratio * (latestCandles.length - 1))));
+            return latestCandles[idx];
+        }
+
+        function yToPrice(indexY) {
+            const container = document.getElementById('candlestickChart');
+            if (!container) return 0;
+            const height = Math.max(1, container.clientHeight);
+            const { min, max } = getPriceBounds();
+            const ratio = Math.max(0, Math.min(1, indexY / height));
+            return max - ((max - min) * ratio);
+        }
+
+        function updateDrawingMetrics(item = null) {
+            const panel = document.getElementById('drawingMetrics');
+            const startEl = document.getElementById('drawingStartInfo');
+            const endEl = document.getElementById('drawingEndInfo');
+            const pnlEl = document.getElementById('drawingPnlInfo');
+            const pnlCard = document.getElementById('drawingPnlCard');
+            if (!panel || !startEl || !endEl || !pnlEl || !pnlCard) return;
+
+            if (!item || !latestCandles.length) {
+                panel.classList.remove('active');
+                startEl.textContent = '-';
+                endEl.textContent = '-';
+                pnlEl.textContent = '-';
+                pnlCard.className = 'drawing-metric';
+                return;
+            }
+
+            const startCandle = xToCandle(item.x1 ?? 0) || latestCandles[0];
+            const endCandle = xToCandle(item.x2 ?? item.x1 ?? 0) || startCandle;
+            const startPrice = item.type === 'horizontal' ? yToPrice(item.y) : yToPrice(item.y1 ?? item.y ?? 0);
+            const livePrice = Number(stockData?.current_price || latestCandles[latestCandles.length - 1]?.close || startPrice);
+            const endPrice = item.type === 'horizontal' ? livePrice : yToPrice(item.y2 ?? item.y1 ?? item.y ?? 0);
+            const diff = endPrice - startPrice;
+            const percent = startPrice ? (diff / startPrice) * 100 : 0;
+
+            if (item.type === 'horizontal') {
+                const liveCandle = latestCandles[latestCandles.length - 1] || endCandle;
+                startEl.textContent = `Line Price | ${formatRupees(startPrice)}`;
+                endEl.textContent = `${formatChartDate(liveCandle.time)} | ${formatRupees(endPrice)}`;
+            } else {
+                startEl.textContent = `${formatChartDate(startCandle.time)} | ${formatRupees(startPrice)}`;
+                endEl.textContent = `${formatChartDate(endCandle.time)} | ${formatRupees(endPrice)}`;
+            }
+            pnlEl.textContent = `${diff >= 0 ? '+' : ''}${formatRupees(Math.abs(diff))} (${diff >= 0 ? '+' : ''}${percent.toFixed(2)}%)`;
+            pnlCard.className = `drawing-metric ${diff >= 0 ? 'pnl-positive' : 'pnl-negative'}`;
+            panel.classList.add('active');
+        }
+
+        function ensureDrawingOverlay() {
+            const container = document.getElementById('candlestickChart');
+            if (!container) return null;
+            let overlay = container.querySelector('.drawing-overlay');
+            if (!overlay) {
+                overlay = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                overlay.setAttribute('class', 'drawing-overlay is-passive');
+                overlay.setAttribute('preserveAspectRatio', 'none');
+                container.appendChild(overlay);
+                overlay.addEventListener('pointerdown', handleDrawingPointerDown);
+                overlay.addEventListener('pointermove', handleDrawingPointerMove);
+                overlay.addEventListener('pointerup', handleDrawingPointerUp);
+                overlay.addEventListener('pointerleave', handleDrawingPointerUp);
+            }
+            overlay.setAttribute('viewBox', `0 0 ${container.clientWidth} ${container.clientHeight}`);
+            overlay.classList.toggle('is-passive', drawingTool === 'none');
+            return overlay;
+        }
+
+        function getOverlayPoint(event) {
+            const overlay = ensureDrawingOverlay();
+            if (!overlay) return null;
+            const rect = overlay.getBoundingClientRect();
+            return {
+                x: Math.max(0, Math.min(rect.width, event.clientX - rect.left)),
+                y: Math.max(0, Math.min(rect.height, event.clientY - rect.top))
+            };
+        }
+
+        function setDrawingTool(tool, button) {
+            drawingTool = tool;
+            drawingStartPoint = null;
+            drawingPreview = null;
+            document.querySelectorAll('.tool-btn[data-tool]').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.tool === tool);
+            });
+            ensureDrawingOverlay();
+            const overlay = document.querySelector('.drawing-overlay');
+            if (overlay) {
+                overlay.style.cursor = tool === 'none' ? 'default' : 'crosshair';
+            }
+            redrawDrawings();
+            updateDrawingHint();
+            if (tool === 'none') {
+                updateDrawingMetrics(null);
+                return;
+            }
+            updateDrawingMetrics(drawings[drawings.length - 1] || null);
+        }
+
+        function clearDrawings() {
+            drawings = [];
+            drawingStartPoint = null;
+            drawingPreview = null;
+            redrawDrawings();
+            updateDrawingHint();
+            updateDrawingMetrics(null);
+        }
+
+        function handleDrawingPointerDown(event) {
+            if (drawingTool === 'none') return;
+            const point = getOverlayPoint(event);
+            if (!point) return;
+            event.preventDefault();
+
+            if (drawingTool === 'horizontal') {
+                drawings.push({ type: 'horizontal', y: point.y, x1: point.x, x2: point.x, y1: point.y, y2: point.y });
+                redrawDrawings();
+                updateDrawingMetrics(drawings[drawings.length - 1]);
+                return;
+            }
+
+            drawingStartPoint = point;
+            drawingPreview = { type: drawingTool, x1: point.x, y1: point.y, x2: point.x, y2: point.y };
+            redrawDrawings();
+        }
+
+        function handleDrawingPointerMove(event) {
+            if (!drawingStartPoint || !drawingPreview) return;
+            const point = getOverlayPoint(event);
+            if (!point) return;
+            drawingPreview.x2 = point.x;
+            drawingPreview.y2 = point.y;
+            redrawDrawings();
+            updateDrawingMetrics(drawingPreview);
+        }
+
+        function handleDrawingPointerUp(event) {
+            if (!drawingStartPoint || !drawingPreview) return;
+            const point = getOverlayPoint(event);
+            if (point) {
+                drawingPreview.x2 = point.x;
+                drawingPreview.y2 = point.y;
+            }
+            const width = Math.abs(drawingPreview.x2 - drawingPreview.x1);
+            const height = Math.abs(drawingPreview.y2 - drawingPreview.y1);
+            if (width > 8 || height > 8) drawings.push({ ...drawingPreview });
+            drawingStartPoint = null;
+            drawingPreview = null;
+            redrawDrawings();
+            updateDrawingMetrics(drawings[drawings.length - 1] || null);
+        }
+
+        function buildFibMarkup(item) {
+            const left = Math.min(item.x1, item.x2);
+            const right = Math.max(item.x1, item.x2);
+            const top = Math.min(item.y1, item.y2);
+            const bottom = Math.max(item.y1, item.y2);
+            const height = bottom - top;
+            const levels = [0, 0.236, 0.382, 0.5, 0.618, 0.786, 1];
+            return levels.map(level => {
+                const y = bottom - (height * level);
+                return `<line x1="${left}" y1="${y}" x2="${right}" y2="${y}" stroke="#f59e0b" stroke-width="1.4" stroke-dasharray="4 4"></line><text x="${right - 6}" y="${Math.max(12, y - 4)}" fill="#f8fafc" font-size="10" text-anchor="end">${level.toFixed(3)}</text>`;
+            }).join('') + `<rect x="${left}" y="${top}" width="${Math.max(1, right - left)}" height="${Math.max(1, bottom - top)}" fill="rgba(245, 158, 11, 0.08)" stroke="#f59e0b" stroke-width="1.2"></rect>`;
+        }
+
+        function buildDrawingMarkup(item) {
+            if (item.type === 'horizontal') return `<line x1="0" y1="${item.y}" x2="9999" y2="${item.y}" stroke="#38bdf8" stroke-width="1.6"></line>`;
+            if (item.type === 'trend') return `<line x1="${item.x1}" y1="${item.y1}" x2="${item.x2}" y2="${item.y2}" stroke="#22c55e" stroke-width="2"></line><circle cx="${item.x1}" cy="${item.y1}" r="4.5" fill="#22c55e"></circle><circle cx="${item.x2}" cy="${item.y2}" r="4.5" fill="#e2e8f0" stroke="#22c55e" stroke-width="1.5"></circle>`;
+            if (item.type === 'rectangle') {
+                const left = Math.min(item.x1, item.x2);
+                const top = Math.min(item.y1, item.y2);
+                const width = Math.abs(item.x2 - item.x1);
+                const height = Math.abs(item.y2 - item.y1);
+                return `<rect x="${left}" y="${top}" width="${Math.max(1, width)}" height="${Math.max(1, height)}" fill="rgba(59, 130, 246, 0.12)" stroke="#3b82f6" stroke-width="1.5"></rect>`;
+            }
+            if (item.type === 'fib') return `<line x1="${item.x1}" y1="${item.y1}" x2="${item.x2}" y2="${item.y2}" stroke="#f8fafc" stroke-width="2"></line><line x1="${item.x1}" y1="0" x2="${item.x1}" y2="9999" stroke="#14b8a6" stroke-width="1.4"></line><line x1="${item.x2}" y1="0" x2="${item.x2}" y2="9999" stroke="#f8fafc" stroke-width="1.2" stroke-dasharray="6 6"></line><circle cx="${item.x1}" cy="${item.y1}" r="5" fill="#1e293b" stroke="#f8fafc" stroke-width="2"></circle><circle cx="${item.x2}" cy="${item.y2}" r="4.5" fill="#1e293b" stroke="#f8fafc" stroke-width="2"></circle>${buildFibMarkup(item)}`;
+            return '';
+        }
+
+        function redrawDrawings() {
+            const overlay = ensureDrawingOverlay();
+            if (!overlay) return;
+            const items = drawingPreview ? [...drawings, drawingPreview] : drawings;
+            overlay.innerHTML = items.map(buildDrawingMarkup).join('');
+        }
+
+        async function renderCandlestickChart(candles) {
+            const chartContainer = document.getElementById('candlestickChart');
+            if (!chartContainer) return;
+            const chartsLib = await ensureLightweightCharts();
+
+            if (!candleChart) {
+                candleChart = chartsLib.createChart(chartContainer, {
+                    width: chartContainer.clientWidth,
+                    height: chartContainer.clientHeight || 300,
+                    layout: {
+                        background: { color: '#1a1a1a' },
+                        textColor: '#888'
+                    },
+                    grid: {
+                        vertLines: { color: '#2a2a2a' },
+                        horzLines: { color: '#2a2a2a' }
+                    },
+                    rightPriceScale: {
+                        borderColor: '#2a2a2a'
+                    },
+                    timeScale: {
+                        borderColor: '#2a2a2a',
+                        timeVisible: true,
+                        secondsVisible: false
+                    },
+                    crosshair: {
+                        mode: chartsLib.CrosshairMode.Normal
+                    }
+                });
+
+                candleSeries = createCandlestickSeries(candleChart, {
+                    upColor: '#10b981',
+                    downColor: '#ef4444',
+                    borderUpColor: '#10b981',
+                    borderDownColor: '#ef4444',
+                    wickUpColor: '#10b981',
+                    wickDownColor: '#ef4444'
+                });
+            }
+
+            if (!candleSeries) {
+                console.error('Candlestick series could not be initialized');
+                return;
+            }
+
+            const formattedCandles = candles.map(candle => ({
+                time: Math.floor(new Date(candle.time).getTime() / 1000),
+                open: parseFloat(candle.open),
+                high: parseFloat(candle.high),
+                low: parseFloat(candle.low),
+                close: parseFloat(candle.close)
+            }));
+            latestCandles = formattedCandles;
+
+            candleSeries.setData(formattedCandles);
+            candleChart.timeScale().fitContent();
+            ensureDrawingOverlay();
+            redrawDrawings();
+            updateDrawingMetrics(drawingPreview || drawings[drawings.length - 1] || null);
+        }
+        
+        function updateTechnicalIndicators() {
+            if (!stockData) return;
+            const currentPrice = stockData.current_price;
+            
+            // RSI
+            const rsi = 45 + Math.random() * 10;
+            document.getElementById('rsiValue').textContent = '+' + rsi.toFixed(2);
+            document.getElementById('rsiVerdict').textContent = rsi > 70 ? 'Overbought' : rsi < 30 ? 'Oversold' : 'Neutral';
+            document.getElementById('rsiVerdict').className = 'indicator-verdict ' + (rsi > 70 ? 'verdict-bearish' : rsi < 30 ? 'verdict-bullish' : 'verdict-neutral');
+            
+            // MACD
+            const macd = (Math.random() - 0.5) * 0.5;
+            document.getElementById('macdValue').textContent = (macd >= 0 ? '+' : '') + macd.toFixed(2);
+            document.getElementById('macdVerdict').textContent = macd > 0 ? 'Bullish' : 'Bearish';
+            document.getElementById('macdVerdict').className = 'indicator-verdict ' + (macd > 0 ? 'verdict-bullish' : 'verdict-bearish');
+            
+            // Beta
+            const beta = 1.0 + Math.random() * 0.3;
+            document.getElementById('betaValue').textContent = '+' + beta.toFixed(2);
+            
+            // Support/Resistance
+            const pivot = currentPrice;
+            document.getElementById('pivotLevel').textContent = pivot.toFixed(2);
+            document.getElementById('r1Level').textContent = (pivot * 1.02).toFixed(2);
+            document.getElementById('r2Level').textContent = (pivot * 1.04).toFixed(2);
+            document.getElementById('r3Level').textContent = (pivot * 1.06).toFixed(2);
+            document.getElementById('s1Level').textContent = (pivot * 0.98).toFixed(2);
+            document.getElementById('s2Level').textContent = (pivot * 0.96).toFixed(2);
+            document.getElementById('s3Level').textContent = (pivot * 0.94).toFixed(2);
+            
+            // Moving Averages
+            const ma10 = currentPrice * (0.98 + Math.random() * 0.04);
+            const ma20 = currentPrice * (0.97 + Math.random() * 0.05);
+            const ma50 = currentPrice * (0.96 + Math.random() * 0.06);
+            const ma100 = currentPrice * (0.95 + Math.random() * 0.07);
+            const ma200 = currentPrice * (0.94 + Math.random() * 0.08);
+            
+            ['ma10','ema10','ma20','ema20','ma50','ema50','ma100','ema100','ma200','ema200'].forEach((id,i) => {
+                const val = [ma10,ma10*0.99,ma20,ma20*0.99,ma50,ma50*0.99,ma100,ma100*0.99,ma200,ma200*0.99][i];
+                document.getElementById(id).textContent = val.toFixed(2);
+                document.getElementById(id).className = 'ma-value ' + (currentPrice > val ? 'above' : 'below');
+            });
+            
+            // Volume
+            const totalVol = Math.floor(Math.random() * 2000000) + 1000000;
+            const deliveryVol = Math.floor(totalVol * (0.4 + Math.random() * 0.2));
+            document.getElementById('totalVolume').textContent = totalVol.toLocaleString('en-IN');
+            document.getElementById('deliveryVolume').textContent = deliveryVol.toLocaleString('en-IN');
+            document.getElementById('deliveryPercentage').textContent = ((deliveryVol/totalVol)*100).toFixed(2) + '%';
+            
+            generateVolumeChart();
+            updateTechnicalSummary();
+        }
+        
+        function updateTechnicalSummary() {
+            let bearish = 0, neutral = 0, bullish = 0;
+            const rsi = parseFloat(document.getElementById('rsiValue').textContent);
+            if (rsi > 70) bearish++; else if (rsi < 30) bullish++; else neutral++;
+            const macd = parseFloat(document.getElementById('macdValue').textContent);
+            if (macd < 0) bearish++; else if (macd > 0) bullish++; else neutral++;
+            ['ma10','ma20','ma50','ma100','ma200'].forEach(ma => {
+                if (document.getElementById(ma).classList.contains('below')) bearish++; else bullish++;
+            });
+            document.getElementById('bearishCount').textContent = bearish;
+            document.getElementById('neutralCount').textContent = neutral;
+            document.getElementById('bullishCount').textContent = bullish;
+            const signalEl = document.getElementById('techSignal');
+            if (bearish > bullish && bearish > neutral) { signalEl.textContent = 'Bearish'; signalEl.className = 'tech-signal bearish'; }
+            else if (bullish > bearish && bullish > neutral) { signalEl.textContent = 'Bullish'; signalEl.className = 'tech-signal bullish'; }
+            else { signalEl.textContent = 'Neutral'; signalEl.className = 'tech-signal neutral'; }
+            generateTechGauge(bearish, neutral, bullish, bearish+neutral+bullish);
+        }
+        
+        function generateTechGauge(bearish, neutral, bullish, total) {
+            const gauge = document.getElementById('techGauge'); gauge.innerHTML = '';
+            for (let i = 0; i < Math.round((bearish/total)*20); i++) { const b = document.createElement('div'); b.className = 'gauge-bar bearish'; gauge.appendChild(b); }
+            for (let i = 0; i < Math.round((neutral/total)*20); i++) { const b = document.createElement('div'); b.className = 'gauge-bar neutral'; gauge.appendChild(b); }
+            for (let i = 0; i < 20 - Math.round((bearish+neutral)/total)*20; i++) { const b = document.createElement('div'); b.className = 'gauge-bar bullish'; gauge.appendChild(b); }
+        }
+        
+        function generateVolumeChart() {
+            const ctx = document.getElementById('volumeChart').getContext('2d');
+            if (volumeChart) volumeChart.destroy();
+            const labels = ['24 Feb','25 Feb','26 Feb','27 Feb','02 Mar'];
+            const totalVolumes = labels.map(() => Math.floor(Math.random() * 1000000) + 500000);
+            const deliveryVolumes = totalVolumes.map(v => Math.floor(v * (0.4 + Math.random() * 0.2)));
+            volumeChart = new Chart(ctx, { type: 'bar', data: { labels: labels, datasets: [{ label: 'Total', data: totalVolumes, backgroundColor: '#8b5cf6', borderRadius: 4 }, { label: 'Delivery', data: deliveryVolumes, backgroundColor: '#06b6d4', borderRadius: 4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false, drawBorder: false }, ticks: { color: '#888' } }, y: { grid: { color: '#2a2a2a', drawBorder: false }, ticks: { color: '#888' } } } } });
+        }
+        
+        function loadNews() {
+            document.getElementById('newsList').innerHTML = newsData.map(n => `<div class="news-item"><div class="news-header"><span class="news-source">${n.source}</span><span class="news-date">${n.date}</span></div><div class="news-title">${n.title}</div><div class="news-summary">${n.summary}</div></div>`).join('');
+        }
+        
+        function changeTimeframe(timeframe) {
+            currentTimeframe = timeframe;
+            document.querySelectorAll('.time-filter').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('onclick')?.includes(`'${timeframe}'`)) btn.classList.add('active');
+            });
+            fetchStockDetails(timeframe);
+        }
+        
+        function updateUI() {
+            if (!stockData) return;
+            document.getElementById('companyName').textContent = stockData.symbol;
+            document.getElementById('companyFullName').textContent = stockData.name;
+            document.getElementById('companyLogo').textContent = stockData.symbol[0];
+            document.getElementById('pageTitle').textContent = `${stockData.symbol} - TradeWise`;
+            document.getElementById('currentPrice').textContent = '₹' + stockData.current_price.toFixed(2);
+            document.getElementById('changeAmount').textContent = (stockData.change_amount >= 0 ? '+' : '') + stockData.change_amount.toFixed(2);
+            document.getElementById('changePercent').textContent = '(' + (stockData.change_percent >= 0 ? '+' : '') + stockData.change_percent.toFixed(2) + '%)';
+            document.getElementById('priceChange').className = 'price-change ' + (stockData.change_percent >= 0 ? 'positive' : 'negative');
+            ['todayLow','todayHigh','week52Low','week52High','openPrice','prevClose','lowerCircuit','upperCircuit'].forEach((id,i) => { document.getElementById(id).textContent = '₹' + [stockData.today_low,stockData.today_high,stockData.week_52_low,stockData.week_52_high,stockData.open,stockData.prev_close,stockData.lower_circuit,stockData.upper_circuit][i].toFixed(2); });
+            document.getElementById('volume').textContent = stockData.volume.toLocaleString();
+            ['marketCap','roe','peRatio','eps','pbRatio','divYield','industryPE','bookValue','debtToEquity','faceValue'].forEach((id,i) => { const val = [stockData.market_cap,stockData.roe,stockData.pe_ratio,stockData.eps,stockData.pb_ratio,stockData.dividend_yield,stockData.industry_pe,stockData.book_value,stockData.debt_to_equity,stockData.face_value][i]; document.getElementById(id).textContent = id === 'marketCap' ? '₹' + val + 'Cr' : id === 'roe' || id === 'divYield' ? val + '%' : id === 'faceValue' || id === 'bookValue' ? '₹' + (typeof val === 'number' ? val.toFixed(2) : val) : val; });
+            generateFinancialChart('revenue');
+        }
+        
+        function generateFinancialChart(type) {
+            const ctx = document.getElementById('financialChart').getContext('2d');
+            if (financialChart) financialChart.destroy();
+            const data = type === 'revenue' ? stockData.revenue : type === 'profit' ? stockData.profit : stockData.revenue;
+            const labels = data.map(d => d.quarter);
+            const values = data.map(d => d.value);
+            financialChart = new Chart(ctx, { type: 'bar', data: { labels: labels, datasets: [{ data: values, backgroundColor: '#10b981', borderRadius: 4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false, drawBorder: false }, ticks: { color: '#888' } }, y: { grid: { color: '#2a2a2a', drawBorder: false }, ticks: { color: '#888' } } } } });
+        }
+        
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById(tab + 'Tab').classList.add('active');
+        }
+        
+        function switchFinancialTab(type) {
+            document.querySelectorAll('.financial-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            generateFinancialChart(type);
+        }
+        
+        function switchVolumeTab(period) {
+            document.querySelectorAll('.volume-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            generateVolumeChart();
+        }
+        
+        function toggleSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            const icon = document.getElementById(sectionId.replace('Section', 'Icon'));
+            if (section.style.display === 'none') { section.style.display = 'block'; icon.className = 'fas fa-chevron-up'; }
+            else { section.style.display = 'none'; icon.className = 'fas fa-chevron-down'; }
+        }
+
+        function startLiveRefresh() {
+            if (liveRefreshTimer) return;
+            liveRefreshTimer = setInterval(() => fetchStockDetails(currentTimeframe), 3000);
+        }
+
+        function stopLiveRefresh() {
+            if (!liveRefreshTimer) return;
+            clearInterval(liveRefreshTimer);
+            liveRefreshTimer = null;
+        }
+
+        function buyStock() {
+            window.location.href = `/explore?buy=${currentSymbol}`;
+        }
+
+        function sellStock() {
+            window.location.href = `/explore?sell=${currentSymbol}`;
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchStockDetails(currentTimeframe);
+            startLiveRefresh();
+            updateDrawingHint();
+        });
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                stopLiveRefresh();
+                return;
+            }
+
+            fetchStockDetails(currentTimeframe);
+            startLiveRefresh();
+        });
+
+        window.addEventListener('resize', () => {
+            if (candleChart) {
+                candleChart.applyOptions({
+                    width: document.getElementById('candlestickChart').clientWidth
+                });
+                ensureDrawingOverlay();
+                redrawDrawings();
+            }
+        });
+    </script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

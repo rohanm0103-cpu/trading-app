@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fund Management - Admin</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .admin-layout{display:flex;min-height:100vh}.sidebar{width:260px;background:linear-gradient(180deg,#1e293b 0%,#0f172a 100%);color:white;padding:1.5rem 0;position:fixed;height:100vh;overflow-y:auto;z-index:100}.sidebar-header{padding:0 1.5rem 1.5rem 1.5rem;border-bottom:1px solid rgba(255,255,255,0.1);margin-bottom:1.5rem}.sidebar-brand{font-size:1.5rem;font-weight:700;color:#3b82f6;display:flex;align-items:center;gap:0.5rem}.sidebar-brand i{color:#D4AF37}.sidebar-menu{list-style:none;padding:0 1rem}.sidebar-item{margin-bottom:0.5rem}.sidebar-link{display:flex;align-items:center;gap:0.75rem;padding:0.875rem 1rem;color:#cbd5e1;text-decoration:none;border-radius:8px;transition:all 0.3s;font-weight:500}.sidebar-link:hover,.sidebar-link.active{background:rgba(59,130,246,0.2);color:#60a5fa}.sidebar-link.active{background:rgba(59,130,246,0.3);color:white;border-left:3px solid #3b82f6}.sidebar-link i{width:20px;text-align:center}.main-content{flex:1;margin-left:260px;padding:2rem}.top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid #e2e8f0}.top-bar h1{font-size:1.8rem;color:#1e293b;font-weight:700}.content-section{background:white;border-radius:12px;padding:2rem;box-shadow:0 2px 4px rgba(0,0,0,0.05);margin-bottom:2rem}.summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin-bottom:2rem}.summary-card{background:linear-gradient(135deg,#eff6ff,#f8fafc);border:1px solid #dbeafe;border-radius:16px;padding:1.25rem;box-shadow:0 10px 24px rgba(15,23,42,0.05)}.summary-card .label{font-size:.9rem;font-weight:700;color:#64748b;margin-bottom:.55rem;text-transform:uppercase;letter-spacing:.04em}.summary-card .value{font-size:1.8rem;font-weight:800;color:#0f172a;line-height:1.15}.summary-card .value.small{font-size:1.45rem}.summary-card .note{font-size:.85rem;color:#475569;margin-top:.5rem}.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem}.section-header h2{font-size:1.4rem;color:#1e293b;font-weight:600}.section-header h2 i{margin-right:0.5rem;color:#3b82f6}.data-table{width:100%;border-collapse:collapse}.data-table thead{background:#f8fafc}.data-table th{padding:1rem;text-align:left;font-weight:600;color:#475569;border-bottom:2px solid #e2e8f0}.data-table td{padding:1rem;border-bottom:1px solid #e2e8f0;color:#334155}.data-table tbody tr:hover{background:#f8fafc}.badge{padding:0.25rem 0.75rem;border-radius:20px;font-size:0.85rem;font-weight:500}.badge-success{background:#dcfce7;color:#166534}.badge-warning{background:#fef3c7;color:#92400e}.badge-danger{background:#fee2e2;color:#991b1b}.action-btn{padding:0.4rem 0.8rem;border:none;border-radius:6px;cursor:pointer;font-size:0.85rem;transition:all 0.3s;margin-right:0.5rem}.btn-add{background:#22c55e;color:white}.btn-add:hover{background:#16a34a}.btn-deduct{background:#ef4444;color:white}.btn-deduct:hover{background:#dc2626}.btn-approve{background:#22c55e;color:white}.btn-approve:hover{background:#16a34a}.btn-reject{background:#ef4444;color:white}.btn-reject:hover{background:#dc2626}.modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);display:none;justify-content:center;align-items:center;z-index:1000}.modal.active{display:flex}.modal-content{background:white;border-radius:12px;padding:2rem;width:90%;max-width:500px;max-height:90vh;overflow-y:auto;animation:slideUp 0.3s ease}@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid #e2e8f0}.modal-header h3{font-size:1.3rem;color:#1e293b;font-weight:600}.modal-close{background:none;border:none;font-size:1.5rem;color:#64748b;cursor:pointer}.modal-close:hover{color:#ef4444}.form-group{margin-bottom:1.25rem}.form-group label{display:block;margin-bottom:0.5rem;color:#334155;font-weight:500}.form-group input,.form-group select,.form-group textarea{width:100%;padding:0.75rem;border:2px solid #e2e8f0;border-radius:8px;font-size:1rem}.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:#3b82f6}.modal-footer{display:flex;gap:1rem;justify-content:flex-end;margin-top:2rem}.btn-cancel{padding:0.75rem 1.5rem;border:1px solid #e2e8f0;border-radius:8px;background:white;color:#334155;font-weight:500;cursor:pointer}.btn-cancel:hover{background:#f1f5f9}.btn-confirm{padding:0.75rem 1.5rem;border:none;border-radius:8px;background:#3b82f6;color:white;font-weight:500;cursor:pointer}.btn-confirm:hover{background:#2563eb}@media(max-width:1024px){.sidebar{width:70px}.sidebar-header span,.sidebar-link span{display:none}.sidebar-brand{justify-content:center}.sidebar-link{justify-content:center;padding:1rem}.main-content{margin-left:70px}}@media(max-width:768px){.admin-layout{flex-direction:column}.sidebar{width:100%;height:auto;position:relative}.sidebar-menu{display:flex;overflow-x:auto;padding:0.5rem 0;gap:0.5rem}.sidebar-item{margin:0}.sidebar-link{padding:0.75rem;white-space:nowrap}.main-content{margin-left:0;padding:1rem}}
+    </style>
+</head>
+<body class="admin-layout">
+    <aside class="sidebar">
+        <div class="sidebar-header"><div class="sidebar-brand"><i class="fas fa-shield-alt"></i><span>Admin</span></div></div>
+        <ul class="sidebar-menu">
+            <li class="sidebar-item"><a href="{{ url_for('admin_dashboard') }}" class="sidebar-link"><i class="fas fa-home"></i><span>Dashboard</span></a></li>
+            <li class="sidebar-item"><a href="{{ url_for('admin_users') }}" class="sidebar-link"><i class="fas fa-users"></i><span>User Management</span></a></li>
+            <li class="sidebar-item"><a href="{{ url_for('admin_stocks') }}" class="sidebar-link"><i class="fas fa-chart-line"></i><span>Stock Management</span></a></li>
+            <li class="sidebar-item"><a href="{{ url_for('admin_transactions') }}" class="sidebar-link"><i class="fas fa-exchange-alt"></i><span>Transaction Management</span></a></li>
+            <li class="sidebar-item"><a href="{{ url_for('admin_analytics') }}" class="sidebar-link"><i class="fas fa-chart-bar"></i><span>Analytics & Reports</span></a></li>
+            <li class="sidebar-item"><a href="{{ url_for('admin_funds') }}" class="sidebar-link active"><i class="fas fa-wallet"></i><span>Fund Management</span></a></li>
+            <li class="sidebar-item"><a href="{{ url_for('admin_settings') }}" class="sidebar-link"><i class="fas fa-cog"></i><span>Admin Controls</span></a></li>
+            <li class="sidebar-item" style="margin-top:2rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,0.1)"><a href="{{ url_for('logout') }}" class="sidebar-link" style="color:#f87171"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <div class="top-bar">
+            <h1><i class="fas fa-wallet"></i> Fund Management</h1>
+        </div>
+
+        <div class="summary-grid">
+            <div class="summary-card"><div class="label">Total Platform Funds</div><div class="value">&#8377;{{ "%.2f"|format(fund_summary.total_platform_funds) }}</div><div class="note">Deposits minus withdrawals plus current month revenue.</div></div>
+            <div class="summary-card"><div class="label">Total User Balance</div><div class="value">&#8377;{{ "%.2f"|format(fund_summary.total_user_balance) }}</div><div class="note">Combined wallet balance across all users.</div></div>
+            <div class="summary-card"><div class="label">Total Deposits</div><div class="value">&#8377;{{ "%.2f"|format(fund_summary.total_deposits) }}</div><div class="note">Approved deposits and admin credits.</div></div>
+            <div class="summary-card"><div class="label">Total Withdrawals</div><div class="value">&#8377;{{ "%.2f"|format(fund_summary.total_withdrawals) }}</div><div class="note">Approved withdrawals and admin debits.</div></div>
+            <div class="summary-card"><div class="label">Pending Withdrawals</div><div class="value">&#8377;{{ "%.2f"|format(fund_summary.pending_withdrawals) }}</div><div class="note">Still waiting for admin action.</div></div>
+            <div class="summary-card"><div class="label">Today's Transactions</div><div class="value small">{{ fund_summary.today_transactions }}</div><div class="note">Buy and sell orders created today.</div></div>
+            <div class="summary-card"><div class="label">Monthly Revenue</div><div class="value">&#8377;{{ "%.2f"|format(fund_summary.monthly_revenue) }}</div><div class="note">Estimated from this month's brokerage turnover.</div></div>
+        </div>
+
+        <div class="content-section">
+            <div class="section-header">
+                <h2><i class="fas fa-list"></i> User Wallet Balances</h2>
+                <span style="color:#64748b">{{ users|length }} users</span>
+            </div>
+
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Email</th>
+                        <th>Balance</th>
+                        <th>Transactions</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td><strong>{{ user.username }}</strong></td>
+                        <td>{{ user.email }}</td>
+                        <td><strong style="color:#16a34a">&#8377;{{ "%.2f"|format(user.balance) }}</strong></td>
+                        <td>{{ user.transaction_count }}</td>
+                        <td>
+                            <button class="action-btn btn-add" onclick="openAddModal({{ user.id }}, '{{ user.username }}', {{ user.balance }})"><i class="fas fa-plus"></i> Add</button>
+                            <button class="action-btn btn-deduct" onclick="openDeductModal({{ user.id }}, '{{ user.username }}', {{ user.balance }})"><i class="fas fa-minus"></i> Deduct</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if pending_requests %}
+        <div class="content-section">
+            <div class="section-header">
+                <h2><i class="fas fa-clock"></i> Pending Deposit/Withdrawal Requests</h2>
+                <span style="color:#64748b">{{ pending_requests|length }} pending</span>
+            </div>
+
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Type</th>
+                        <th>Amount</th>
+                        <th>Reason</th>
+                        <th>Requested</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for req in pending_requests %}
+                    <tr>
+                        <td>{{ req.username }}<br><small style="color:#64748b">{{ req.email }}</small></td>
+                        <td><span class="badge {{ 'badge-success' if req.type == 'DEPOSIT' else 'badge-danger' }}">{{ req.type }}</span></td>
+                        <td><strong>&#8377;{{ "%.2f"|format(req.amount) }}</strong></td>
+                        <td>{{ req.reason }}</td>
+                        <td>{{ req.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                        <td>
+                            <button class="action-btn btn-approve" onclick="approveRequest({{ req.id }})"><i class="fas fa-check"></i></button>
+                            <button class="action-btn btn-reject" onclick="rejectRequest({{ req.id }})"><i class="fas fa-times"></i></button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+    </main>
+
+    <div class="modal" id="addModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-plus"></i> Add Money</h3>
+                <button class="modal-close" onclick="closeAddModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="addForm" onsubmit="addMoney(event)">
+                <input type="hidden" id="addUserId">
+                <div class="form-group">
+                    <label>Current Balance</label>
+                    <input type="text" id="currentBalance" readonly style="background:#f8fafc">
+                </div>
+                <div class="form-group">
+                    <label>Amount to Add (&#8377;) *</label>
+                    <input type="number" id="addAmount" step="0.01" min="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>Reason</label>
+                    <textarea id="addReason" rows="3" placeholder="Reason for adding money"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" onclick="closeAddModal()">Cancel</button>
+                    <button type="submit" class="btn-confirm"><i class="fas fa-plus"></i> Add Money</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal" id="deductModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-minus"></i> Deduct Money</h3>
+                <button class="modal-close" onclick="closeDeductModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="deductForm" onsubmit="deductMoney(event)">
+                <input type="hidden" id="deductUserId">
+                <div class="form-group">
+                    <label>Current Balance</label>
+                    <input type="text" id="deductCurrentBalance" readonly style="background:#f8fafc">
+                </div>
+                <div class="form-group">
+                    <label>Amount to Deduct (&#8377;) *</label>
+                    <input type="number" id="deductAmount" step="0.01" min="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>Reason</label>
+                    <textarea id="deductReason" rows="3" placeholder="Reason for deduction" required></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" onclick="closeDeductModal()">Cancel</button>
+                    <button type="submit" class="btn-confirm"><i class="fas fa-minus"></i> Deduct Money</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openAddModal(userId, username, balance) {
+            document.getElementById('addModal').querySelector('h3').innerHTML = `<i class="fas fa-plus"></i> Add Money to ${username}`;
+            document.getElementById('addUserId').value = userId;
+            document.getElementById('currentBalance').value = `?${balance.toFixed(2)}`;
+            document.getElementById('addModal').classList.add('active');
+        }
+        function closeAddModal() {
+            document.getElementById('addModal').classList.remove('active');
+            document.getElementById('addForm').reset();
+        }
+
+        function openDeductModal(userId, username, balance) {
+            document.getElementById('deductModal').querySelector('h3').innerHTML = `<i class="fas fa-minus"></i> Deduct Money from ${username}`;
+            document.getElementById('deductUserId').value = userId;
+            document.getElementById('deductCurrentBalance').value = `?${balance.toFixed(2)}`;
+            document.getElementById('deductModal').classList.add('active');
+        }
+        function closeDeductModal() {
+            document.getElementById('deductModal').classList.remove('active');
+            document.getElementById('deductForm').reset();
+        }
+
+        async function addMoney(e) {
+            e.preventDefault();
+            const userId = document.getElementById('addUserId').value;
+            const amount = parseFloat(document.getElementById('addAmount').value);
+            const reason = document.getElementById('addReason').value || 'Admin adjustment';
+
+            try {
+                const res = await fetch('/admin/funds/add-money', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ user_id: userId, amount, reason })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    alert(data.message);
+                    location.reload();
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (err) {
+                alert('Error: ' + err.message);
+            }
+            closeAddModal();
+        }
+
+        async function deductMoney(e) {
+            e.preventDefault();
+            const userId = document.getElementById('deductUserId').value;
+            const amount = parseFloat(document.getElementById('deductAmount').value);
+            const reason = document.getElementById('deductReason').value;
+
+            if (!reason) {
+                alert('Please provide a reason for deduction');
+                return;
+            }
+
+            try {
+                const res = await fetch('/admin/funds/deduct-money', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ user_id: userId, amount, reason })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    alert(data.message);
+                    location.reload();
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (err) {
+                alert('Error: ' + err.message);
+            }
+            closeDeductModal();
+        }
+
+        async function approveRequest(requestId) {
+            if (!confirm('Approve this fund request?')) return;
+            try {
+                const res = await fetch(`/admin/funds/requests/${requestId}/approve`, { method: 'POST' });
+                const data = await res.json();
+                if (res.ok) {
+                    alert(data.message);
+                    location.reload();
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (err) {
+                alert('Error: ' + err.message);
+            }
+        }
+
+        async function rejectRequest(requestId) {
+            if (!confirm('Reject this fund request?')) return;
+            try {
+                const res = await fetch(`/admin/funds/requests/${requestId}/reject`, { method: 'POST' });
+                const data = await res.json();
+                if (res.ok) {
+                    alert(data.message);
+                    location.reload();
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (err) {
+                alert('Error: ' + err.message);
+            }
+        }
+
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                }
+            });
+        });
+    </script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
